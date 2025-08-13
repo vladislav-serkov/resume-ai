@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, useNavigate, useLocation } from "react-router-dom";
-import { Upload, FileText, History, BarChart3, Bot, Download, Sparkles, Briefcase, User, Search, Eye, MessageSquare, Zap } from "lucide-react";
+import { Upload, FileText, History, BarChart3, Bot, Download, Sparkles, Briefcase, User, Search, Eye, MessageSquare, Zap, Menu } from "lucide-react";
 import ResumeViewer from "./components/ResumeViewer";
 import VacancyAnalyzer from "./components/VacancyAnalyzer";
+import HistoryAndStats from "./components/HistoryAndStats";
 
 // Main Dashboard Component
 const Dashboard = () => {
