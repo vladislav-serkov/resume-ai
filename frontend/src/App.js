@@ -16,6 +16,7 @@ const Dashboard = () => {
   const [showResumeViewer, setShowResumeViewer] = useState(false);
   const [vacancyAnalysis, setVacancyAnalysis] = useState(null);
   const [activeTab, setActiveTab] = useState("upload");
+  const [sidebarView, setSidebarView] = useState("quick-actions");
 
   // Simulate PDF upload and processing
   const handleResumeUpload = async (file) => {
