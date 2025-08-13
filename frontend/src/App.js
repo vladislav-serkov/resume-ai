@@ -106,146 +106,275 @@ ${resumeData.name}`;
       </div>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Navigation Tabs */}
+        <div className="mb-8">
+          <div className="border-b border-gray-200">
+            <nav className="-mb-px flex space-x-8">
+              <button
+                onClick={() => setActiveTab("upload")}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "upload"
+                    ? "border-blue-500 text-blue-600"
+                    : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+                }`}
+              >
+                <Upload className="h-4 w-4 inline-block mr-2" />
+                Загрузка резюме
+              </button>
+              <button
+                onClick={() => setActiveTab("vacancy")}
+                disabled={!resumeData}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "vacancy" && resumeData
+                    ? "border-purple-500 text-purple-600"
+                    : "border-transparent text-gray-400 cursor-not-allowed"
+                }`}
+              >
+                <Briefcase className="h-4 w-4 inline-block mr-2" />
+                Работа с вакансией
+              </button>
+              <button
+                onClick={() => setActiveTab("results")}
+                disabled={!adaptedResume}
+                className={`py-4 px-1 border-b-2 font-medium text-sm ${
+                  activeTab === "results" && adaptedResume
+                    ? "border-green-500 text-green-600"
+                    : "border-transparent text-gray-400 cursor-not-allowed"
+                }`}
+              >
+                <Eye className="h-4 w-4 inline-block mr-2" />
+                Результаты
+              </button>
+            </nav>
+          </div>
+        </div>
+
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           
-          {/* Resume Upload Section */}
+          {/* Main Content Area */}
           <div className="lg:col-span-2">
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <Upload className="h-6 w-6 text-blue-600" />
-                <h2 className="text-xl font-semibold text-gray-900">Загрузка резюме</h2>
-              </div>
-              
-              {!resumeData ? (
-                <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
-                  <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                  <h3 className="text-lg font-medium text-gray-900 mb-2">Загрузите ваше резюме</h3>
-                  <p className="text-gray-600 mb-4">Поддерживаются форматы PDF</p>
-                  <input
-                    type="file"
-                    accept=".pdf"
-                    onChange={(e) => e.target.files[0] && handleResumeUpload(e.target.files[0])}
-                    className="hidden"
-                    id="resume-upload"
-                  />
-                  <label
-                    htmlFor="resume-upload"
-                    className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
-                  >
-                    Выбрать файл
-                  </label>
-                </div>
-              ) : (
-                <div className="space-y-4">
-                  <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
-                    <div className="flex items-center space-x-3">
-                      <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
-                        <FileText className="h-5 w-5 text-green-600" />
-                      </div>
-                      <div>
-                        <h3 className="font-medium text-green-900">{resumeData.name}</h3>
-                        <p className="text-sm text-green-700">{resumeData.position}</p>
-                      </div>
-                    </div>
-                    <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                      <Download className="h-4 w-4" />
-                      <span>Скачать PDF</span>
-                    </button>
-                  </div>
-
-                  {/* Resume Preview */}
-                  <div className="p-4 bg-gray-50 rounded-lg">
-                    <h4 className="font-medium text-gray-900 mb-3">Извлеченные данные:</h4>
-                    <div className="space-y-3 text-sm">
-                      <div>
-                        <span className="font-medium text-gray-700">Навыки:</span>
-                        <div className="flex flex-wrap gap-2 mt-1">
-                          {resumeData.skills.map((skill, idx) => (
-                            <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
-                              {skill}
-                            </span>
-                          ))}
-                        </div>
-                      </div>
-                      <div>
-                        <span className="font-medium text-gray-700">Опыт работы:</span>
-                        <div className="mt-2 space-y-2">
-                          {resumeData.experience.map((exp, idx) => (
-                            <div key={idx} className="pl-4 border-l-2 border-gray-200">
-                              <p className="font-medium text-gray-800">{exp.role} - {exp.company}</p>
-                              <p className="text-xs text-gray-600">{exp.period}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-              
-              {isProcessing && (
-                <div className="flex items-center justify-center space-x-3 p-6">
-                  <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
-                  <span className="text-gray-600">Обработка резюме...</span>
-                </div>
-              )}
-            </div>
-
-            {/* Vacancy Processing Section */}
-            {resumeData && (
-              <div className="bg-white rounded-xl shadow-sm border p-6 mt-6">
-                <div className="flex items-center space-x-3 mb-6">
-                  <Briefcase className="h-6 w-6 text-purple-600" />
-                  <h2 className="text-xl font-semibold text-gray-900">Адаптация под вакансию</h2>
-                </div>
-                
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">
-                      Описание вакансии
-                    </label>
-                    <textarea
-                      value={vacancyText}
-                      onChange={(e) => setVacancyText(e.target.value)}
-                      placeholder="Вставьте текст вакансии для адаптации резюме..."
-                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
-                      rows="6"
-                    />
+            
+            {/* Upload Tab */}
+            {activeTab === "upload" && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-xl shadow-sm border p-6">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <Upload className="h-6 w-6 text-blue-600" />
+                    <h2 className="text-xl font-semibold text-gray-900">Загрузка резюме</h2>
                   </div>
                   
-                  <button
-                    onClick={handleVacancyProcess}
-                    disabled={!vacancyText || isProcessing}
-                    className="flex items-center space-x-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                  >
-                    <Sparkles className="h-4 w-4" />
-                    <span>Адаптировать резюме</span>
-                  </button>
+                  {!resumeData ? (
+                    <div className="border-2 border-dashed border-gray-300 rounded-lg p-8 text-center hover:border-blue-400 transition-colors">
+                      <FileText className="h-12 w-12 text-gray-400 mx-auto mb-4" />
+                      <h3 className="text-lg font-medium text-gray-900 mb-2">Загрузите ваше резюме</h3>
+                      <p className="text-gray-600 mb-4">Поддерживаются форматы PDF</p>
+                      <input
+                        type="file"
+                        accept=".pdf"
+                        onChange={(e) => e.target.files[0] && handleResumeUpload(e.target.files[0])}
+                        className="hidden"
+                        id="resume-upload"
+                      />
+                      <label
+                        htmlFor="resume-upload"
+                        className="inline-flex items-center px-6 py-3 bg-blue-600 text-white rounded-lg hover:bg-blue-700 cursor-pointer transition-colors"
+                      >
+                        Выбрать файл
+                      </label>
+                    </div>
+                  ) : (
+                    <div className="space-y-4">
+                      <div className="flex items-center justify-between p-4 bg-green-50 rounded-lg border border-green-200">
+                        <div className="flex items-center space-x-3">
+                          <div className="h-10 w-10 bg-green-100 rounded-full flex items-center justify-center">
+                            <FileText className="h-5 w-5 text-green-600" />
+                          </div>
+                          <div>
+                            <h3 className="font-medium text-green-900">{resumeData.name}</h3>
+                            <p className="text-sm text-green-700">{resumeData.position}</p>
+                          </div>
+                        </div>
+                        <div className="flex space-x-2">
+                          <button 
+                            onClick={() => setShowResumeViewer(true)}
+                            className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                          >
+                            <Eye className="h-4 w-4" />
+                            <span>Просмотр</span>
+                          </button>
+                          <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                            <Download className="h-4 w-4" />
+                            <span>PDF</span>
+                          </button>
+                        </div>
+                      </div>
+
+                      {/* Resume Preview */}
+                      <div className="p-4 bg-gray-50 rounded-lg">
+                        <h4 className="font-medium text-gray-900 mb-3">Извлеченные данные:</h4>
+                        <div className="space-y-3 text-sm">
+                          <div>
+                            <span className="font-medium text-gray-700">Навыки:</span>
+                            <div className="flex flex-wrap gap-2 mt-1">
+                              {resumeData.skills.map((skill, idx) => (
+                                <span key={idx} className="px-2 py-1 bg-blue-100 text-blue-800 rounded-full text-xs">
+                                  {skill}
+                                </span>
+                              ))}
+                            </div>
+                          </div>
+                          <div>
+                            <span className="font-medium text-gray-700">Опыт работы:</span>
+                            <div className="mt-2 space-y-2">
+                              {resumeData.experience.map((exp, idx) => (
+                                <div key={idx} className="pl-4 border-l-2 border-gray-200">
+                                  <p className="font-medium text-gray-800">{exp.role} - {exp.company}</p>
+                                  <p className="text-xs text-gray-600">{exp.period}</p>
+                                </div>
+                              ))}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+                      <div className="text-center">
+                        <button
+                          onClick={() => setActiveTab("vacancy")}
+                          className="flex items-center space-x-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors mx-auto"
+                        >
+                          <Sparkles className="h-4 w-4" />
+                          <span>Перейти к адаптации</span>
+                        </button>
+                      </div>
+                    </div>
+                  )}
+                  
+                  {isProcessing && (
+                    <div className="flex items-center justify-center space-x-3 p-6">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-blue-600"></div>
+                      <span className="text-gray-600">Обработка резюме...</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            )}
+
+            {/* Vacancy Tab */}
+            {activeTab === "vacancy" && resumeData && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-xl shadow-sm border p-6">
+                  <div className="flex items-center space-x-3 mb-6">
+                    <Briefcase className="h-6 w-6 text-purple-600" />
+                    <h2 className="text-xl font-semibold text-gray-900">Работа с вакансией</h2>
+                  </div>
+                  
+                  <div className="space-y-4">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-2">
+                        Описание вакансии
+                      </label>
+                      <textarea
+                        value={vacancyText}
+                        onChange={(e) => setVacancyText(e.target.value)}
+                        placeholder="Вставьте текст вакансии для анализа и адаптации резюме..."
+                        className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent resize-none"
+                        rows="8"
+                      />
+                    </div>
+                    
+                    <div className="flex space-x-3">
+                      <button
+                        onClick={handleVacancyProcess}
+                        disabled={!vacancyText || isProcessing}
+                        className="flex items-center space-x-2 px-6 py-3 bg-purple-600 text-white rounded-lg hover:bg-purple-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                      >
+                        <Sparkles className="h-4 w-4" />
+                        <span>Адаптировать резюме</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  {isProcessing && (
+                    <div className="mt-6 flex items-center justify-center space-x-3 p-6 bg-purple-50 rounded-lg">
+                      <div className="animate-spin rounded-full h-6 w-6 border-b-2 border-purple-600"></div>
+                      <span className="text-purple-700">Адаптирую резюме под вакансию...</span>
+                    </div>
+                  )}
                 </div>
 
-                {/* Adapted Resume Results */}
-                {adaptedResume && (
-                  <div className="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-200">
-                    <h4 className="font-medium text-purple-900 mb-3">Адаптированное резюме готово!</h4>
+                {/* Vacancy Analysis */}
+                {vacancyText && (
+                  <VacancyAnalyzer 
+                    vacancyText={vacancyText} 
+                    onAnalysisComplete={setVacancyAnalysis} 
+                  />
+                )}
+              </div>
+            )}
+
+            {/* Results Tab */}
+            {activeTab === "results" && adaptedResume && (
+              <div className="space-y-6">
+                <div className="bg-white rounded-xl shadow-sm border p-6">
+                  <div className="flex items-center justify-between mb-6">
+                    <div className="flex items-center space-x-3">
+                      <Zap className="h-6 w-6 text-green-600" />
+                      <h2 className="text-xl font-semibold text-gray-900">Результаты адаптации</h2>
+                    </div>
                     <div className="flex space-x-3">
-                      <button className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                      <button className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
                         <Download className="h-4 w-4" />
                         <span>Скачать резюме</span>
                       </button>
-                      <button className="flex items-center space-x-2 px-4 py-2 bg-white text-purple-600 border border-purple-600 rounded-lg hover:bg-purple-50 transition-colors">
-                        <FileText className="h-4 w-4" />
+                      <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
+                        <MessageSquare className="h-4 w-4" />
                         <span>Сопроводительное письмо</span>
                       </button>
                     </div>
                   </div>
-                )}
+
+                  {/* Success Message */}
+                  <div className="p-4 bg-green-50 rounded-lg border border-green-200 mb-6">
+                    <div className="flex items-center space-x-3">
+                      <div className="h-8 w-8 bg-green-100 rounded-full flex items-center justify-center">
+                        <Sparkles className="h-4 w-4 text-green-600" />
+                      </div>
+                      <div>
+                        <h3 className="font-medium text-green-900">Резюме успешно адаптировано!</h3>
+                        <p className="text-sm text-green-700">Выделены ключевые навыки и опыт для данной вакансии</p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Tabs for Original vs Adapted */}
+                  <div className="border-b border-gray-200 mb-6">
+                    <nav className="-mb-px flex space-x-8">
+                      <button className="py-2 px-1 border-b-2 border-blue-500 font-medium text-sm text-blue-600">
+                        Адаптированное резюме
+                      </button>
+                      <button className="py-2 px-1 border-b-2 border-transparent font-medium text-sm text-gray-500 hover:text-gray-700">
+                        Сравнить с оригиналом
+                      </button>
+                    </nav>
+                  </div>
+
+                  {/* Resume Preview */}
+                  <div className="bg-gray-50 rounded-lg p-4">
+                    <ResumeViewer resumeData={adaptedResume} isAdapted={true} />
+                  </div>
+                </div>
 
                 {/* Cover Letter */}
                 {coverLetter && (
-                  <div className="mt-4 p-4 bg-gray-50 rounded-lg">
-                    <h5 className="font-medium text-gray-900 mb-2">Сопроводительное письмо:</h5>
-                    <div className="text-sm text-gray-700 whitespace-pre-line">
-                      {coverLetter}
+                  <div className="bg-white rounded-xl shadow-sm border p-6">
+                    <div className="flex items-center space-x-3 mb-4">
+                      <MessageSquare className="h-6 w-6 text-blue-600" />
+                      <h3 className="text-lg font-semibold text-gray-900">Сопроводительное письмо</h3>
+                    </div>
+                    <div className="p-4 bg-gray-50 rounded-lg">
+                      <pre className="text-sm text-gray-700 whitespace-pre-wrap font-sans">
+                        {coverLetter}
+                      </pre>
                     </div>
                   </div>
                 )}
