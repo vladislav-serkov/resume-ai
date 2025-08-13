@@ -82,6 +82,7 @@ ${resumeData.name}`;
       setAdaptedResume(mockAdaptedResume);
       setCoverLetter(mockCoverLetter);
       setIsProcessing(false);
+      setActiveTab("results");
     }, 2500);
   };
 
