@@ -362,7 +362,7 @@ ${resumeData.name}`;
                   </div>
 
                   {/* Resume Preview */}
-                  <div className="bg-gray-50 rounded-lg p-4">
+                  <div className="bg-gray-50 rounded-lg p-1">
                     <ResumeViewer resumeData={adaptedResume} isAdapted={true} />
                   </div>
                 </div>
@@ -387,92 +387,130 @@ ${resumeData.name}`;
 
           {/* Sidebar */}
           <div className="space-y-6">
-            {/* Job Search */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <Search className="h-5 w-5 text-green-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Поиск вакансий</h3>
-              </div>
-              
-              <div className="space-y-3">
-                <input
-                  type="text"
-                  placeholder="Должность..."
-                  className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                />
-                <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
-                  <Search className="h-4 w-4" />
-                  <span>Найти вакансии</span>
+            {/* Sidebar Navigation */}
+            <div className="bg-white rounded-xl shadow-sm border p-4">
+              <div className="flex space-x-2">
+                <button
+                  onClick={() => setSidebarView("quick-actions")}
+                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                    sidebarView === "quick-actions"
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  Быстрые действия
+                </button>
+                <button
+                  onClick={() => setSidebarView("history")}
+                  className={`flex-1 py-2 px-3 rounded-lg text-sm font-medium transition-colors ${
+                    sidebarView === "history"
+                      ? "bg-blue-100 text-blue-700"
+                      : "text-gray-600 hover:text-gray-900"
+                  }`}
+                >
+                  История и статистика
                 </button>
               </div>
-
-              {/* Mock Search Results */}
-              <div className="mt-4 space-y-2">
-                <div className="p-3 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer">
-                  <h4 className="font-medium text-gray-900 text-sm">Senior Frontend Developer</h4>
-                  <p className="text-xs text-gray-600">Яндекс • Москва • до 300к</p>
-                </div>
-                <div className="p-3 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer">
-                  <h4 className="font-medium text-gray-900 text-sm">React Developer</h4>
-                  <p className="text-xs text-gray-600">Avito • Москва • до 250к</p>
-                </div>
-                <div className="p-3 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer">
-                  <h4 className="font-medium text-gray-900 text-sm">Fullstack Developer</h4>
-                  <p className="text-xs text-gray-600">Сбер • Москва • до 280к</p>
-                </div>
-              </div>
             </div>
 
-            {/* Stats */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <BarChart3 className="h-5 w-5 text-orange-600" />
-                <h3 className="text-lg font-semibold text-gray-900">Статистика</h3>
-              </div>
-              
-              <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Обработано резюме:</span>
-                  <span className="font-semibold text-gray-900">12</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Адаптаций:</span>
-                  <span className="font-semibold text-gray-900">8</span>
-                </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Поисков вакансий:</span>
-                  <span className="font-semibold text-gray-900">25</span>
-                </div>
-                <div className="h-px bg-gray-200 my-3"></div>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm text-gray-600">Успешных откликов:</span>
-                  <span className="font-semibold text-green-600">3</span>
-                </div>
-              </div>
-            </div>
+            {/* Quick Actions View */}
+            {sidebarView === "quick-actions" && (
+              <>
+                {/* Job Search */}
+                <div className="bg-white rounded-xl shadow-sm border p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <Search className="h-5 w-5 text-green-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">Поиск вакансий</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <input
+                      type="text"
+                      placeholder="Должность..."
+                      className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                    <button className="w-full flex items-center justify-center space-x-2 px-4 py-3 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors">
+                      <Search className="h-4 w-4" />
+                      <span>Найти вакансии</span>
+                    </button>
+                  </div>
 
-            {/* History */}
-            <div className="bg-white rounded-xl shadow-sm border p-6">
-              <div className="flex items-center space-x-3 mb-4">
-                <History className="h-5 w-5 text-blue-600" />
-                <h3 className="text-lg font-semibold text-gray-900">История</h3>
+                  {/* Mock Search Results */}
+                  <div className="mt-4 space-y-2">
+                    <div className="p-3 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer">
+                      <h4 className="font-medium text-gray-900 text-sm">Senior Frontend Developer</h4>
+                      <p className="text-xs text-gray-600">Яндекс • Москва • до 300к</p>
+                    </div>
+                    <div className="p-3 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer">
+                      <h4 className="font-medium text-gray-900 text-sm">React Developer</h4>
+                      <p className="text-xs text-gray-600">Avito • Москва • до 250к</p>
+                    </div>
+                    <div className="p-3 border border-gray-200 rounded-lg hover:border-green-300 transition-colors cursor-pointer">
+                      <h4 className="font-medium text-gray-900 text-sm">Fullstack Developer</h4>
+                      <p className="text-xs text-gray-600">Сбер • Москва • до 280к</p>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Quick Stats */}
+                <div className="bg-white rounded-xl shadow-sm border p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <BarChart3 className="h-5 w-5 text-orange-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">Быстрая статистика</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Обработано резюме:</span>
+                      <span className="font-semibold text-gray-900">12</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Адаптаций:</span>
+                      <span className="font-semibold text-gray-900">28</span>
+                    </div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Поисков вакансий:</span>
+                      <span className="font-semibold text-gray-900">45</span>
+                    </div>
+                    <div className="h-px bg-gray-200 my-3"></div>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm text-gray-600">Успешных откликов:</span>
+                      <span className="font-semibold text-green-600">8</span>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recent History */}
+                <div className="bg-white rounded-xl shadow-sm border p-6">
+                  <div className="flex items-center space-x-3 mb-4">
+                    <History className="h-5 w-5 text-blue-600" />
+                    <h3 className="text-lg font-semibold text-gray-900">Последние действия</h3>
+                  </div>
+                  
+                  <div className="space-y-3">
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="font-medium text-gray-900 text-sm">Frontend Developer - Яндекс</p>
+                      <p className="text-xs text-gray-600">2 часа назад</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="font-medium text-gray-900 text-sm">React Developer - Avito</p>
+                      <p className="text-xs text-gray-600">1 день назад</p>
+                    </div>
+                    <div className="p-3 bg-gray-50 rounded-lg">
+                      <p className="font-medium text-gray-900 text-sm">Senior Developer - Сбер</p>
+                      <p className="text-xs text-gray-600">3 дня назад</p>
+                    </div>
+                  </div>
+                </div>
+              </>
+            )}
+
+            {/* History and Stats View */}
+            {sidebarView === "history" && (
+              <div className="lg:col-span-3">
+                <HistoryAndStats />
               </div>
-              
-              <div className="space-y-3">
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="font-medium text-gray-900 text-sm">Frontend Developer - Яндекс</p>
-                  <p className="text-xs text-gray-600">2 часа назад</p>
-                </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="font-medium text-gray-900 text-sm">React Developer - Avito</p>
-                  <p className="text-xs text-gray-600">1 день назад</p>
-                </div>
-                <div className="p-3 bg-gray-50 rounded-lg">
-                  <p className="font-medium text-gray-900 text-sm">Senior Developer - Сбер</p>
-                  <p className="text-xs text-gray-600">3 дня назад</p>
-                </div>
-              </div>
-            </div>
+            )}
           </div>
         </div>
       </div>
