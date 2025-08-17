@@ -35,6 +35,7 @@ const ProfilePage = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
+  const [showResumeBuilder, setShowResumeBuilder] = useState(false);
   const [profileData, setProfileData] = useState({
     name: user.name,
     email: user.email,
