@@ -172,12 +172,7 @@ const Dashboard = ({ user, onLogout }) => {
 
             {/* User menu */}
             <div className="flex items-center space-x-4">
-              <div className="relative">
-                <Bell className="h-6 w-6 text-gray-600 hover:text-gray-900 cursor-pointer transition-colors" />
-                <span className="absolute -top-1 -right-1 h-3 w-3 bg-red-500 rounded-full flex items-center justify-center">
-                  <span className="text-xs text-white font-bold">3</span>
-                </span>
-              </div>
+              <NotificationCenter user={user} />
               
               <div className="flex items-center space-x-3">
                 <div className="text-right">
