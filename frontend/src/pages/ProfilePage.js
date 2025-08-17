@@ -643,6 +643,13 @@ const ProfilePage = ({ user, onLogout }) => {
           </div>
         )}
       </div>
+
+      {/* Resume Builder Modal */}
+      <ResumeBuilder 
+        user={user} 
+        isOpen={showResumeBuilder} 
+        onClose={() => setShowResumeBuilder(false)} 
+      />
     </div>
   );
 };
