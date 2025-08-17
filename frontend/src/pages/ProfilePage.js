@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import NotificationCenter from '../components/NotificationCenter';
+import ResumeBuilder from '../components/ResumeBuilder';
 import { 
   ArrowLeft, 
   User, 
@@ -21,7 +23,12 @@ import {
   Settings,
   Eye,
   Zap,
-  Target
+  Target,
+  PlusCircle,
+  Calendar,
+  Award,
+  Star,
+  Clock
 } from 'lucide-react';
 
 const ProfilePage = ({ user, onLogout }) => {
