@@ -3,9 +3,9 @@ import { ApiResponse } from '../types';
 
 export const errorHandler = (
   err: Error,
-  req: Request,
+  _req: Request,
   res: Response<ApiResponse>,
-  next: NextFunction
+  _next: NextFunction
 ) => {
   console.error('Error:', err);
 

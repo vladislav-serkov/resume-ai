@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ApiResponse, Notification } from '../types';
 
 export class NotificationController {
-  static async getNotifications(req: Request, res: Response<ApiResponse<Notification[]>>) {
+  static async getNotifications(_req: Request, res: Response<ApiResponse<Notification[]>>) {
     try {
       // Mock notification data
       const mockNotifications: Notification[] = [
@@ -128,7 +128,7 @@ export class NotificationController {
     }
   }
 
-  static async markAllAsRead(req: Request, res: Response<ApiResponse>) {
+  static async markAllAsRead(_req: Request, res: Response<ApiResponse>) {
     try {
       const response: ApiResponse = {
         success: true,

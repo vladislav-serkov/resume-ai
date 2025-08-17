@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ApiResponse, UserStats } from '../types';
 
 export class StatsController {
-  static async getUserStats(req: Request, res: Response<ApiResponse<UserStats>>) {
+  static async getUserStats(_req: Request, res: Response<ApiResponse<UserStats>>) {
     try {
       // Mock stats data
       const mockStats: UserStats = {
