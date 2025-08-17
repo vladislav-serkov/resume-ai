@@ -1,6 +1,11 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../contexts/AuthContext';
+import { apiService } from '../services/api';
+import { useApiData, useApiCall } from '../hooks/useApi';
 import NotificationCenter from '../components/NotificationCenter';
+import LoadingSpinner from '../components/LoadingSpinner';
+import VacancyAnalysis from '../components/VacancyAnalysis';
 import { 
   Search, 
   MapPin, 
@@ -25,93 +30,138 @@ import {
   Filter
 } from 'lucide-react';
 
-const Dashboard = ({ user, onLogout }) => {
+const Dashboard = () => {
   const navigate = useNavigate();
+  const { user, logout } = useAuth();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({
     location: '',
-    salary: '',
+    salary_min: '',
+    salary_max: '',
     experience: '',
-    remote: false
+    remote: '',
+    company: '',
+    tags: ''
   });
   const [activeTab, setActiveTab] = useState('search');
 
-  // Mock data
-  const mockVacancies = [
-    {
-      id: 1,
-      title: "Senior Frontend Developer",
-      company: "Яндекс",
-      location: "Москва",
-      salary: "200 000 - 350 000 ₽",
-      type: "Полная занятость",
-      tags: ["React", "TypeScript", "Redux"],
-      posted: "2 часа назад",
-      aiMatch: 92,
-      logo: "https://via.placeholder.com/48/FF0000/FFFFFF?text=Я",
-      description: "Ищем опытного Frontend разработчика для работы над ключевыми продуктами компании...",
-      requirements: ["React от 3 лет", "TypeScript", "Опыт с Redux", "Знание Jest"],
-      isNew: true,
-      remote: false
-    },
-    {
-      id: 2,
-      title: "React Developer",
-      company: "Avito",
-      location: "Санкт-Петербург",
-      salary: "150 000 - 250 000 ₽",
-      type: "Полная занятость",
-      tags: ["React", "JavaScript", "Node.js"],
-      posted: "5 часов назад",
-      aiMatch: 87,
-      logo: "https://via.placeholder.com/48/00AA44/FFFFFF?text=A",
-      description: "Присоединяйтесь к команде разработки одного из крупнейших маркетплейсов...",
-      requirements: ["React от 2 лет", "JavaScript ES6+", "Опыт с API", "Git"],
-      isNew: true,
-      remote: true
-    },
-    {
-      id: 3,
-      title: "Frontend Team Lead",
-      company: "Сбер",
-      location: "Москва",
-      salary: "300 000 - 450 000 ₽",
-      type: "Полная занятость",
-      tags: ["React", "Leadership", "Architecture"],
-      posted: "1 день назад",
-      aiMatch: 78,
-      logo: "https://via.placeholder.com/48/00A650/FFFFFF?text=С",
-      description: "Ведущий разработчик для управления командой frontend разработки...",
-      requirements: ["React от 5 лет", "Опыт руководства", "Архитектура", "Менторство"],
-      isNew: false,
-      remote: false
-    },
-    {
-      id: 4,
-      title: "Full Stack Developer",
-      company: "Ozon",
-      location: "Москва",
-      salary: "180 000 - 280 000 ₽",
-      type: "Полная занятость",
-      tags: ["React", "Node.js", "MongoDB"],
-      posted: "3 дня назад",
-      aiMatch: 95,
-      logo: "https://via.placeholder.com/48/005AFF/FFFFFF?text=O",
-      description: "Разработчик полного стека для ecommerce платформы...",
-      requirements: ["React", "Node.js", "MongoDB", "REST API"],
-      isNew: false,
-      remote: true
-    }
-  ];
+  // API hooks for data fetching
+  const { 
+    data: vacancies = [], 
+    loading: vacanciesLoading, 
+    error: vacanciesError,
+    refetch: refetchVacancies 
+  } = useApiData(() => {
+    const filters = {
+      query: searchQuery,
+      ...selectedFilters
+    };
+    // Remove empty filters
+    Object.keys(filters).forEach(key => {
+      if (!filters[key]) delete filters[key];
+    });
+    return apiService.vacancies.search(filters);
+  }, [searchQuery, selectedFilters], {
+    showErrorToast: false // Handle errors manually
+  });
 
-  const mockStats = {
-    totalApplications: 24,
-    responses: 8,
-    interviews: 3,
-    offers: 1,
-    aiAdaptations: 45,
-    autoResponses: 12
+  const { 
+    data: stats = {},
+    loading: statsLoading,
+    error: statsError,
+    refetch: refetchStats
+  } = useApiData(() => apiService.stats.get(), [], {
+    showErrorToast: false
+  });
+
+  const { 
+    data: applications = [],
+    loading: applicationsLoading,
+    error: applicationsError,
+    refetch: refetchApplications
+  } = useApiData(() => apiService.applications.getAll(), [], {
+    showErrorToast: false
+  });
+
+  // Search handlers
+  const handleSearchSubmit = (e) => {
+    e.preventDefault();
+    refetchVacancies();
   };
+
+  const handleFilterChange = (filterName, value) => {
+    setSelectedFilters(prev => ({
+      ...prev,
+      [filterName]: value
+    }));
+  };
+
+  const clearFilters = () => {
+    setSelectedFilters({
+      location: '',
+      salary_min: '',
+      salary_max: '',
+      experience: '',
+      remote: '',
+      company: '',
+      tags: ''
+    });
+    setSearchQuery('');
+  };
+
+  // Get actual vacancy data from API or fallback to empty array
+  const displayVacancies = vacancies?.data || [];
+  
+  // Get actual stats data from API
+  const displayStats = stats?.data || {
+    totalApplications: 0,
+    responses: 0,
+    interviews: 0,
+    offers: 0,
+    aiAdaptations: 0,
+    autoResponses: 0
+  };
+
+  // Error handling components
+  const ErrorMessage = ({ message, onRetry, className = "" }) => (
+    <div className={`text-center py-8 ${className}`}>
+      <div className="flex flex-col items-center space-y-4">
+        <AlertCircle className="h-12 w-12 text-red-500" />
+        <div>
+          <p className="text-gray-600 mb-2">Произошла ошибка при загрузке данных</p>
+          {message && (
+            <p className="text-sm text-gray-500">{message}</p>
+          )}
+        </div>
+        {onRetry && (
+          <button
+            onClick={onRetry}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Попробовать снова
+          </button>
+        )}
+      </div>
+    </div>
+  );
+
+  const StatsErrorFallback = () => (
+    <div className="bg-red-50 border border-red-200 rounded-2xl p-6 mb-8">
+      <div className="flex items-center space-x-3">
+        <AlertCircle className="h-6 w-6 text-red-600" />
+        <div>
+          <h3 className="text-red-800 font-medium">Ошибка загрузки статистики</h3>
+          <p className="text-red-600 text-sm">Не удалось загрузить данные статистики</p>
+        </div>
+        <button
+          onClick={refetchStats}
+          className="ml-auto px-3 py-1 bg-red-600 text-white text-sm rounded hover:bg-red-700 transition-colors"
+        >
+          Обновить
+        </button>
+      </div>
+    </div>
+  );
 
   const getMatchColor = (match) => {
     if (match >= 90) return 'text-green-600 bg-green-100';
@@ -120,8 +170,42 @@ const Dashboard = ({ user, onLogout }) => {
     return 'text-red-600 bg-red-100';
   };
 
-  const handleApply = (vacancyId) => {
-    navigate(`/vacancy/${vacancyId}`);
+  // API call for creating application
+  const { execute: submitApplication, loading: applicationSubmitting } = useApiCall(
+    (vacancyData) => apiService.applications.create({
+      vacancyId: vacancyData.id,
+      position: vacancyData.title,
+      company: vacancyData.company
+    }),
+    {
+      successMessage: 'Отклик успешно отправлен!',
+      onSuccess: (data) => {
+        // Refresh applications list
+        refetchApplications();
+        // Refresh stats
+        refetchStats();
+      }
+    }
+  );
+
+  const handleApply = async (vacancy) => {
+    await submitApplication(vacancy);
+  };
+
+  // API call for updating application status
+  const { execute: updateApplicationStatus } = useApiCall(
+    ({ id, status }) => apiService.applications.updateStatus(id, status),
+    {
+      successMessage: 'Статус заявки обновлен',
+      onSuccess: () => {
+        refetchApplications();
+        refetchStats();
+      }
+    }
+  );
+
+  const handleStatusChange = async (applicationId, newStatus) => {
+    await updateApplicationStatus({ id: applicationId, status: newStatus });
   };
 
   return (
@@ -161,6 +245,15 @@ const Dashboard = ({ user, onLogout }) => {
                   <span>Мои отклики</span>
                 </button>
                 <button
+                  onClick={() => setActiveTab('analysis')}
+                  className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                    activeTab === 'analysis' ? 'bg-blue-100 text-blue-700' : 'text-gray-600 hover:text-gray-900'
+                  }`}
+                >
+                  <Bot className="h-4 w-4" />
+                  <span>AI Анализ</span>
+                </button>
+                <button
                   onClick={() => navigate('/profile')}
                   className="flex items-center space-x-2 px-3 py-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
                 >
@@ -185,7 +278,7 @@ const Dashboard = ({ user, onLogout }) => {
               </div>
               
               <button
-                onClick={onLogout}
+                onClick={logout}
                 className="p-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
               >
                 <LogOut className="h-5 w-5" />
@@ -196,8 +289,12 @@ const Dashboard = ({ user, onLogout }) => {
       </header>
 
       <div className="max-w-7xl mx-auto px-6 py-8">
+        {/* Error handling for stats */}
+        {statsError && <StatsErrorFallback />}
+        
         {/* AI Status Bar */}
-        <div className="mb-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
+        {!statsError && (
+          <div className="mb-8 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl p-6 text-white">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="h-12 w-12 bg-white/20 rounded-2xl flex items-center justify-center">
@@ -209,83 +306,141 @@ const Dashboard = ({ user, onLogout }) => {
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-bold">{mockStats.autoResponses}</div>
+              <div className="text-2xl font-bold">{displayStats.autoResponses}</div>
               <div className="text-blue-100 text-sm">автооткликов сегодня</div>
             </div>
           </div>
           
           <div className="mt-4 grid grid-cols-4 gap-6">
             <div className="text-center">
-              <div className="text-xl font-bold">{mockStats.totalApplications}</div>
+              <div className="text-xl font-bold">{displayStats.totalApplications}</div>
               <div className="text-blue-100 text-sm">Всего откликов</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold">{mockStats.responses}</div>
+              <div className="text-xl font-bold">{displayStats.responses}</div>
               <div className="text-blue-100 text-sm">Ответов</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold">{mockStats.interviews}</div>
+              <div className="text-xl font-bold">{displayStats.interviews}</div>
               <div className="text-blue-100 text-sm">Собеседований</div>
             </div>
             <div className="text-center">
-              <div className="text-xl font-bold">{mockStats.aiAdaptations}</div>
+              <div className="text-xl font-bold">{displayStats.aiAdaptations}</div>
               <div className="text-blue-100 text-sm">AI-адаптаций</div>
             </div>
           </div>
         </div>
+        )}
 
         {activeTab === 'search' && (
           <>
             {/* Search and filters */}
             <div className="mb-8 bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <div className="flex flex-col lg:flex-row gap-4">
-                <div className="flex-1">
-                  <div className="relative">
-                    <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
-                    <input
-                      type="text"
-                      value={searchQuery}
-                      onChange={(e) => setSearchQuery(e.target.value)}
-                      placeholder="Поиск вакансий..."
-                      className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
-                    />
+              <form onSubmit={handleSearchSubmit}>
+                <div className="flex flex-col lg:flex-row gap-4 mb-4">
+                  <div className="flex-1">
+                    <div className="relative">
+                      <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 h-5 w-5 text-gray-400" />
+                      <input
+                        type="text"
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder="Поиск вакансий..."
+                        className="w-full pl-12 pr-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                      />
+                    </div>
                   </div>
+                  
+                  <button 
+                    type="submit"
+                    className="px-6 py-3 bg-blue-600 text-white rounded-xl hover:bg-blue-700 transition-colors"
+                  >
+                    Найти
+                  </button>
                 </div>
                 
-                <div className="flex gap-3">
+                {/* Advanced filters */}
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
                   <select
                     value={selectedFilters.location}
-                    onChange={(e) => setSelectedFilters(prev => ({ ...prev, location: e.target.value }))}
+                    onChange={(e) => handleFilterChange('location', e.target.value)}
                     className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   >
                     <option value="">Город</option>
-                    <option value="moscow">Москва</option>
-                    <option value="spb">Санкт-Петербург</option>
-                    <option value="novosibirsk">Новосибирск</option>
+                    <option value="Москва">Москва</option>
+                    <option value="Санкт-Петербург">Санкт-Петербург</option>
+                    <option value="Новосибирск">Новосибирск</option>
+                    <option value="Удаленно">Удаленно</option>
+                  </select>
+                  
+                  <input
+                    type="number"
+                    value={selectedFilters.salary_min}
+                    onChange={(e) => handleFilterChange('salary_min', e.target.value)}
+                    placeholder="Зарплата от"
+                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  />
+                  
+                  <select
+                    value={selectedFilters.experience}
+                    onChange={(e) => handleFilterChange('experience', e.target.value)}
+                    className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
+                  >
+                    <option value="">Опыт</option>
+                    <option value="junior">Junior</option>
+                    <option value="middle">Middle</option>
+                    <option value="senior">Senior</option>
                   </select>
                   
                   <select
-                    value={selectedFilters.salary}
-                    onChange={(e) => setSelectedFilters(prev => ({ ...prev, salary: e.target.value }))}
+                    value={selectedFilters.remote}
+                    onChange={(e) => handleFilterChange('remote', e.target.value)}
                     className="px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                   >
-                    <option value="">Зарплата</option>
-                    <option value="100-150">100-150k</option>
-                    <option value="150-250">150-250k</option>
-                    <option value="250+">250k+</option>
+                    <option value="">Формат работы</option>
+                    <option value="true">Удаленно</option>
+                    <option value="false">Офис</option>
                   </select>
-                  
-                  <button className="flex items-center space-x-2 px-4 py-3 bg-gray-100 text-gray-700 rounded-xl hover:bg-gray-200 transition-colors">
-                    <Filter className="h-4 w-4" />
-                    <span>Фильтры</span>
-                  </button>
                 </div>
-              </div>
+                
+                {/* Clear filters */}
+                {(searchQuery || Object.values(selectedFilters).some(v => v)) && (
+                  <div className="mt-4 flex justify-end">
+                    <button
+                      type="button"
+                      onClick={clearFilters}
+                      className="text-gray-600 hover:text-gray-800 text-sm"
+                    >
+                      Очистить фильтры
+                    </button>
+                  </div>
+                )}
+              </form>
             </div>
 
             {/* Vacancies list */}
             <div className="space-y-6">
-              {mockVacancies.map((vacancy) => (
+              {vacanciesError ? (
+                <ErrorMessage 
+                  message="Не удалось загрузить список вакансий"
+                  onRetry={refetchVacancies}
+                />
+              ) : vacanciesLoading ? (
+                <div className="flex justify-center py-8">
+                  <LoadingSpinner />
+                </div>
+              ) : displayVacancies.length === 0 ? (
+                <div className="text-center py-8">
+                  <p className="text-gray-500">Вакансии не найдены</p>
+                  <button 
+                    onClick={clearFilters}
+                    className="mt-2 text-blue-600 hover:text-blue-800"
+                  >
+                    Очистить фильтры
+                  </button>
+                </div>
+              ) : (
+                displayVacancies.map((vacancy) => (
                 <div key={vacancy.id} className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
                   <div className="flex items-start justify-between mb-4">
                     <div className="flex items-start space-x-4 flex-1">
@@ -362,60 +517,108 @@ const Dashboard = ({ user, onLogout }) => {
                         <span>Подробнее</span>
                       </button>
                       <button 
-                        onClick={() => handleApply(vacancy.id)}
-                        className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity"
+                        onClick={() => handleApply(vacancy)}
+                        disabled={applicationSubmitting}
+                        className="flex items-center space-x-2 px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-lg hover:opacity-90 transition-opacity disabled:opacity-50 disabled:cursor-not-allowed"
                       >
                         <Zap className="h-4 w-4" />
-                        <span>AI-отклик</span>
+                        <span>{applicationSubmitting ? 'Отправка...' : 'AI-отклик'}</span>
                       </button>
                     </div>
                   </div>
                 </div>
-              ))}
+                ))
+              )}
             </div>
           </>
+        )}
+
+        {activeTab === 'analysis' && (
+          <VacancyAnalysis />
         )}
 
         {activeTab === 'applications' && (
           <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-2xl font-bold text-gray-900 mb-6">Мои отклики</h2>
             
-            <div className="space-y-4">
-              {[
-                { id: 1, position: "Senior Frontend Developer", company: "Яндекс", status: "interview", date: "2024-01-15" },
-                { id: 2, position: "React Developer", company: "Avito", status: "response", date: "2024-01-14" },
-                { id: 3, position: "Frontend Team Lead", company: "Сбер", status: "pending", date: "2024-01-12" },
-                { id: 4, position: "Full Stack Developer", company: "Ozon", status: "rejected", date: "2024-01-10" }
-              ].map((application) => (
-                <div key={application.id} className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-                  <div>
-                    <h3 className="font-semibold text-gray-900">{application.position}</h3>
-                    <p className="text-gray-600">{application.company}</p>
-                    <p className="text-sm text-gray-500">{new Date(application.date).toLocaleDateString('ru-RU')}</p>
+            {applicationsError ? (
+              <ErrorMessage 
+                message="Не удалось загрузить список откликов"
+                onRetry={refetchApplications}
+              />
+            ) : applicationsLoading ? (
+              <div className="flex justify-center py-8">
+                <LoadingSpinner />
+              </div>
+            ) : (applications?.data || []).length === 0 ? (
+              <div className="text-center py-8">
+                <p className="text-gray-500">У вас пока нет откликов</p>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {(applications?.data || []).map((application) => (
+                <div key={application.id} className="bg-gray-50 border border-gray-200 rounded-xl p-6 hover:border-gray-300 transition-colors">
+                  <div className="flex items-start justify-between mb-4">
+                    <div className="flex-1">
+                      <div className="flex items-center space-x-3 mb-2">
+                        <h3 className="text-lg font-semibold text-gray-900">{application.position}</h3>
+                        <span className={`px-3 py-1 rounded-full text-sm font-medium ${
+                          application.status === 'interview' ? 'bg-blue-100 text-blue-800' :
+                          application.status === 'response' ? 'bg-green-100 text-green-800' :
+                          application.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
+                          'bg-red-100 text-red-800'
+                        }`}>
+                          {
+                            application.status === 'interview' ? 'Собеседование' :
+                            application.status === 'response' ? 'Ответ получен' :
+                            application.status === 'pending' ? 'Ожидание' :
+                            'Отказ'
+                          }
+                        </span>
+                      </div>
+                      <p className="text-gray-700 font-medium mb-1">{application.company}</p>
+                      <div className="flex items-center space-x-4 text-sm text-gray-600">
+                        <span>Отправлено: {new Date(application.date).toLocaleDateString('ru-RU')}</span>
+                        {application.updatedAt && application.updatedAt !== application.appliedAt && (
+                          <span>Обновлено: {new Date(application.updatedAt).toLocaleDateString('ru-RU')}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                   
-                  <div className="flex items-center space-x-4">
-                    <span className={`px-3 py-1 rounded-full text-sm font-medium ${
-                      application.status === 'interview' ? 'bg-blue-100 text-blue-800' :
-                      application.status === 'response' ? 'bg-green-100 text-green-800' :
-                      application.status === 'pending' ? 'bg-yellow-100 text-yellow-800' :
-                      'bg-red-100 text-red-800'
-                    }`}>
-                      {
-                        application.status === 'interview' ? 'Собеседование' :
-                        application.status === 'response' ? 'Ответ получен' :
-                        application.status === 'pending' ? 'Ожидание' :
-                        'Отказ'
-                      }
-                    </span>
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-2">
+                      <select 
+                        value={application.status}
+                        onChange={(e) => handleStatusChange(application.id, e.target.value)}
+                        className="px-3 py-1 text-sm border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                      >
+                        <option value="pending">Ожидание</option>
+                        <option value="response">Ответ получен</option>
+                        <option value="interview">Собеседование</option>
+                        <option value="rejected">Отказ</option>
+                      </select>
+                    </div>
                     
-                    <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
-                      Подробнее
-                    </button>
+                    <div className="flex items-center space-x-3">
+                      <button 
+                        onClick={() => navigate(`/applications/${application.id}`)}
+                        className="text-blue-600 hover:text-blue-800 font-medium transition-colors"
+                      >
+                        Подробнее
+                      </button>
+                      <button 
+                        onClick={() => navigate(`/vacancy/${application.vacancyId}`)}
+                        className="px-3 py-1 text-gray-600 hover:text-gray-800 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
+                      >
+                        Вакансия
+                      </button>
+                    </div>
                   </div>
                 </div>
-              ))}
-            </div>
+                ))}
+              </div>
+            )}
           </div>
         )}
       </div>

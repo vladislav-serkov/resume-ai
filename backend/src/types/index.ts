@@ -73,8 +73,16 @@ export interface VacancyFilters {
   query?: string;
   location?: string;
   salary?: string;
+  salary_min?: string;
+  salary_max?: string;
   experience?: string;
   remote?: string;
+  company?: string;
+  tags?: string;
+  sort_by?: string;
+  order?: string;
+  limit?: string;
+  offset?: string;
 }
 
 // Application Types
@@ -86,6 +94,9 @@ export interface Application {
   company: string;
   status: 'pending' | 'interview' | 'response' | 'rejected';
   date: string;
+  appliedAt?: string;
+  updatedAt?: string;
+  notes?: string;
 }
 
 // Notification Types
@@ -122,4 +133,17 @@ export interface ApiResponse<T = any> {
   data?: T;
   message?: string;
   error?: string;
+  meta?: {
+    total?: number;
+    count?: number;
+    offset?: number;
+    limit?: number;
+    hasMore?: boolean;
+  };
+  pagination?: {
+    total: number;
+    offset: number;
+    limit: number;
+    hasMore: boolean;
+  };
 }

@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Sparkles, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
+import { useAuth } from '../contexts/AuthContext';
 
-const LoginPage = ({ onLogin }) => {
+const LoginPage = () => {
   const navigate = useNavigate();
+  const { login, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [formData, setFormData] = useState({
     email: '',
     password: ''
@@ -13,23 +14,13 @@ const LoginPage = ({ onLogin }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsLoading(true);
-
-    // Simulate API call
-    setTimeout(() => {
-      const mockUser = {
-        id: 1,
-        name: 'Иван Петров',
-        email: formData.email,
-        avatar: 'ИП',
-        position: 'Frontend Developer',
-        resumeUploaded: true
-      };
-      
-      onLogin(mockUser);
-      setIsLoading(false);
+    
+    const result = await login(formData);
+    
+    if (result.success) {
       navigate('/dashboard');
-    }, 1500);
+    }
+    // Error handling is done in AuthContext with toast notifications
   };
 
   const handleInputChange = (e) => {
@@ -131,10 +122,10 @@ const LoginPage = ({ onLogin }) => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={isLoading}
+              disabled={loading}
               className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:opacity-90 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
             >
-              {isLoading ? (
+              {loading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Вход в систему...

@@ -4,6 +4,8 @@ import { ApiResponse, Vacancy, VacancyFilters } from '../types';
 export class VacancyController {
   static async getVacancies(req: Request<{}, ApiResponse<Vacancy[]>, {}, VacancyFilters>, res: Response<ApiResponse<Vacancy[]>>) {
     try {
+      const filters = req.query;
+      
       // Mock vacancy data
       const mockVacancies: Vacancy[] = [
         {
@@ -72,33 +74,203 @@ export class VacancyController {
         }
       ];
 
-      // Apply filters
-      let filteredVacancies = [...mockVacancies];
+      // Add more mock vacancies for better filtering demonstration
+      const extendedMockVacancies: Vacancy[] = [
+        ...mockVacancies,
+        {
+          id: '5',
+          title: "Backend Developer",
+          company: "Wildberries",
+          location: "Удаленно",
+          salary: "120 000 - 200 000 ₽",
+          type: "Полная занятость",
+          tags: ["Node.js", "PostgreSQL", "Docker"],
+          posted: "1 час назад",
+          aiMatch: 65,
+          logo: "https://via.placeholder.com/48/8B00FF/FFFFFF?text=W",
+          description: "Backend разработчик для высоконагруженной системы...",
+          requirements: ["Node.js от 2 лет", "PostgreSQL", "Docker"],
+          isNew: true,
+          remote: true
+        },
+        {
+          id: '6',
+          title: "Junior Frontend Developer",
+          company: "Mail.ru",
+          location: "Санкт-Петербург",
+          salary: "80 000 - 120 000 ₽",
+          type: "Полная занятость",
+          tags: ["JavaScript", "HTML", "CSS"],
+          posted: "2 дня назад",
+          aiMatch: 45,
+          logo: "https://via.placeholder.com/48/FF6600/FFFFFF?text=M",
+          description: "Начинающий frontend разработчик в команду...",
+          requirements: ["JavaScript", "HTML/CSS", "Git"],
+          isNew: false,
+          remote: false
+        }
+      ];
+
+      // Apply advanced filters
+      let filteredVacancies = [...extendedMockVacancies];
       
-      const { query, location, remote } = req.query;
+      const { 
+        query, 
+        location, 
+        remote, 
+        salary_min, 
+        salary_max, 
+        experience, 
+        company, 
+        tags, 
+        sort_by, 
+        order,
+        limit,
+        offset 
+      } = filters;
       
+      // Text search filter
       if (query) {
+        const searchTerm = query.toLowerCase();
         filteredVacancies = filteredVacancies.filter(v => 
-          v.title.toLowerCase().includes(query.toLowerCase()) ||
-          v.company.toLowerCase().includes(query.toLowerCase()) ||
-          v.description.toLowerCase().includes(query.toLowerCase())
+          v.title.toLowerCase().includes(searchTerm) ||
+          v.company.toLowerCase().includes(searchTerm) ||
+          v.description.toLowerCase().includes(searchTerm) ||
+          v.tags.some(tag => tag.toLowerCase().includes(searchTerm))
         );
       }
       
-      if (location) {
+      // Location filter
+      if (location && location !== 'all') {
         filteredVacancies = filteredVacancies.filter(v => 
           v.location.toLowerCase().includes(location.toLowerCase())
         );
       }
       
+      // Remote work filter
       if (remote === 'true') {
         filteredVacancies = filteredVacancies.filter(v => v.remote);
+      } else if (remote === 'false') {
+        filteredVacancies = filteredVacancies.filter(v => !v.remote);
+      }
+      
+      // Salary filter
+      if (salary_min) {
+        const minSalary = parseInt(salary_min);
+        filteredVacancies = filteredVacancies.filter(v => {
+          const salaryMatch = v.salary.match(/(\d+\s?\d*)\s?000/);
+          if (salaryMatch) {
+            const vacancySalary = parseInt(salaryMatch[1].replace(/\s/g, '')) * 1000;
+            return vacancySalary >= minSalary;
+          }
+          return true;
+        });
+      }
+      
+      if (salary_max) {
+        const maxSalary = parseInt(salary_max);
+        filteredVacancies = filteredVacancies.filter(v => {
+          const salaryMatch = v.salary.match(/(\d+\s?\d*)\s?000/);
+          if (salaryMatch) {
+            const vacancySalary = parseInt(salaryMatch[1].replace(/\s/g, '')) * 1000;
+            return vacancySalary <= maxSalary;
+          }
+          return true;
+        });
+      }
+      
+      // Experience level filter
+      if (experience) {
+        filteredVacancies = filteredVacancies.filter(v => {
+          const title = v.title.toLowerCase();
+          switch (experience) {
+            case 'junior':
+              return title.includes('junior') || title.includes('начинающий');
+            case 'middle':
+              return !title.includes('junior') && !title.includes('senior') && !title.includes('lead');
+            case 'senior':
+              return title.includes('senior') || title.includes('lead');
+            default:
+              return true;
+          }
+        });
+      }
+      
+      // Company filter
+      if (company) {
+        filteredVacancies = filteredVacancies.filter(v => 
+          v.company.toLowerCase().includes(company.toLowerCase())
+        );
+      }
+      
+      // Tags filter
+      if (tags) {
+        const requiredTags = tags.split(',').map(tag => tag.trim().toLowerCase());
+        filteredVacancies = filteredVacancies.filter(v => 
+          requiredTags.some(tag => 
+            v.tags.some(vTag => vTag.toLowerCase().includes(tag))
+          )
+        );
+      }
+      
+      // Sorting
+      if (sort_by) {
+        filteredVacancies.sort((a, b) => {
+          let compareValue = 0;
+          
+          switch (sort_by) {
+            case 'salary':
+              const aSalary = parseInt(a.salary.match(/(\d+)/)?.[1] || '0');
+              const bSalary = parseInt(b.salary.match(/(\d+)/)?.[1] || '0');
+              compareValue = aSalary - bSalary;
+              break;
+            case 'match':
+              compareValue = a.aiMatch - b.aiMatch;
+              break;
+            case 'date':
+              // Mock date comparison based on "posted" field
+              const dateOrder = {
+                'час': 1, 'часа': 1, 'часов': 1,
+                'день': 2, 'дня': 2, 'дней': 2,
+                'неделя': 7, 'недели': 7, 'недель': 7
+              };
+              const aOrder = Object.keys(dateOrder).find(key => a.posted.includes(key));
+              const bOrder = Object.keys(dateOrder).find(key => b.posted.includes(key));
+              const aValue = aOrder ? dateOrder[aOrder as keyof typeof dateOrder] || 0 : 0;
+              const bValue = bOrder ? dateOrder[bOrder as keyof typeof dateOrder] || 0 : 0;
+              compareValue = aValue - bValue;
+              break;
+            case 'company':
+              compareValue = a.company.localeCompare(b.company);
+              break;
+            default:
+              compareValue = a.title.localeCompare(b.title);
+          }
+          
+          return order === 'desc' ? -compareValue : compareValue;
+        });
+      }
+      
+      // Pagination
+      const totalCount = filteredVacancies.length;
+      const startIndex = parseInt(offset || '0');
+      const limitNum = parseInt(limit || '10');
+      
+      if (limit) {
+        filteredVacancies = filteredVacancies.slice(startIndex, startIndex + limitNum);
       }
 
       const response: ApiResponse<Vacancy[]> = {
         success: true,
         data: filteredVacancies,
-        message: 'Vacancies retrieved successfully'
+        message: 'Vacancies retrieved successfully',
+        meta: {
+          total: totalCount,
+          count: filteredVacancies.length,
+          offset: startIndex,
+          limit: limitNum,
+          hasMore: startIndex + limitNum < totalCount
+        }
       };
 
       res.json(response);
