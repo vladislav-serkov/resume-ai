@@ -449,11 +449,18 @@ const ProfilePage = ({ user, onLogout }) => {
           <div className="space-y-6">
             {/* Upload new resume */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center justify-between mb-6">
+              <div className="flex items-center space-x-3 mb-6">
                 <h3 className="text-lg font-semibold text-gray-900">Управление резюме</h3>
+                <button 
+                  onClick={() => setShowResumeBuilder(true)}
+                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+                >
+                  <PlusCircle className="h-4 w-4" />
+                  <span>Создать резюме</span>
+                </button>
                 <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   <Upload className="h-4 w-4" />
-                  <span>Загрузить новое</span>
+                  <span>Загрузить файл</span>
                 </button>
               </div>
 
