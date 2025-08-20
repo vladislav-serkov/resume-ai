@@ -161,7 +161,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
     console.log('Saving profile data:', profileData);
   };
 
-  const handleCancel = () => {
+  const handleCancel = (): void => {
     setIsEditing(false);
     // Reset data
     setProfileData({
