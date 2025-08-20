@@ -126,14 +126,11 @@ backend:
     file: "/app/backend/src/controllers/authController.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "Created POST /api/auth/login and POST /api/auth/register endpoints with mock user data"
-      - working: true
-        agent: "testing"
-        comment: "✅ COMPREHENSIVE TESTING COMPLETED: Authentication endpoints fully functional. POST /api/auth/register (201 status) successfully creates users with Russian names and returns user data with JWT token. POST /api/auth/login (200 status) authenticates users and returns complete user profile with token. Both endpoints return proper JSON structure with success, data, and message fields. Mock data includes realistic Russian user information."
 
   - task: "Profile Management API"
     implemented: true
