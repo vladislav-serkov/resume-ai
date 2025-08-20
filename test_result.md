@@ -102,7 +102,7 @@
 # Testing Data - Main Agent and testing sub agent both should log testing data below this section
 #====================================================================================================
 
-user_problem_statement: "1. Перепиши бэкенд на node.js 2. Полностью свяжи бэкенд с фронтендом (для всей логике на фронте должен быть эндпоинт на бэке) 3. На бэкенде не реализуй логику просто создай заглушки"
+user_problem_statement: "сделай фронт для профиля и резюме и сделай компонент для нотификаций колокольчик - User wants improved profile/resume frontend and notification bell component"
 
 backend:
   - task: "FastAPI Server with MongoDB Integration"
