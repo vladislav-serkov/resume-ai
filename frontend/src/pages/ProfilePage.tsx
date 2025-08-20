@@ -103,10 +103,10 @@ interface Stats {
 
 const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState('profile');
-  const [isEditing, setIsEditing] = useState(false);
-  const [showResumeBuilder, setShowResumeBuilder] = useState(false);
-  const [profileData, setProfileData] = useState({
+  const [activeTab, setActiveTab] = useState<string>('profile');
+  const [isEditing, setIsEditing] = useState<boolean>(false);
+  const [showResumeBuilder, setShowResumeBuilder] = useState<boolean>(false);
+  const [profileData, setProfileData] = useState<ProfileData>({
     name: user.name,
     email: user.email,
     phone: '+7 (999) 123-45-67',
