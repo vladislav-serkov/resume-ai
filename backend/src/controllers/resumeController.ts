@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ApiResponse, Resume } from '../types';
 
 export class ResumeController {
-  static async getResumes(_req: Request, res: Response<ApiResponse<Resume[]>>) {
+  static async getResumes(req: Request, res: Response<ApiResponse<Resume[]>>) {
     try {
       // Mock resume data
       const mockResumes: Resume[] = [

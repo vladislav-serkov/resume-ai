@@ -75,7 +75,7 @@ export class VacancyController {
       // Apply filters
       let filteredVacancies = [...mockVacancies];
       
-      const { query, location, remote } = req.query;
+      const { query, location, salary, remote } = req.query;
       
       if (query) {
         filteredVacancies = filteredVacancies.filter(v => 

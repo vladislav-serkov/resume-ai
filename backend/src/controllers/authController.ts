@@ -4,7 +4,7 @@ import { ApiResponse, AuthResponse, LoginRequest, RegisterRequest, User } from '
 export class AuthController {
   static async login(req: Request<{}, ApiResponse<AuthResponse>, LoginRequest>, res: Response<ApiResponse<AuthResponse>>) {
     try {
-      const { email } = req.body;
+      const { email, password } = req.body;
 
       // Mock user data
       const mockUser: User = {

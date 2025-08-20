@@ -10,7 +10,7 @@ import statsRoutes from './stats';
 const router = Router();
 
 // Health check route
-router.get('/', (_req, res) => {
+router.get('/', (req, res) => {
   res.json({ 
     success: true, 
     message: 'SmartCareer API is running',

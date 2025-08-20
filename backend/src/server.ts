@@ -11,7 +11,7 @@ import apiRoutes from './routes';
 config();
 
 const app = express();
-const PORT = parseInt(process.env.PORT || '8001', 10);
+const PORT = process.env.PORT || 8001;
 
 // Security middleware
 app.use(helmet());
@@ -42,7 +42,7 @@ if (process.env.NODE_ENV !== 'production') {
 app.use('/api', apiRoutes);
 
 // Health check endpoint
-app.get('/health', (_req, res) => {
+app.get('/health', (req, res) => {
   res.json({ 
     status: 'healthy',
     timestamp: new Date().toISOString(),

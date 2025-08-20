@@ -74,7 +74,7 @@ export interface VacancyFilters {
   location?: string;
   salary?: string;
   experience?: string;
-  remote?: string;
+  remote?: boolean;
 }
 
 // Application Types

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ApiResponse, User } from '../types';
 
 export class ProfileController {
-  static async getProfile(_req: Request, res: Response<ApiResponse<User>>) {
+  static async getProfile(req: Request, res: Response<ApiResponse<User>>) {
     try {
       // Mock user data
       const mockUser: User = {

@@ -2,7 +2,7 @@ import { Request, Response } from 'express';
 import { ApiResponse, Application } from '../types';
 
 export class ApplicationController {
-  static async getApplications(_req: Request, res: Response<ApiResponse<Application[]>>) {
+  static async getApplications(req: Request, res: Response<ApiResponse<Application[]>>) {
     try {
       // Mock application data
       const mockApplications: Application[] = [
