@@ -65,7 +65,7 @@ function App(): JSX.Element {
             path="/vacancy/:id" 
             element={
               isAuthenticated ? 
-              <VacancyPage user={user} onLogout={handleLogout} /> : 
+              <VacancyPage user={user!} onLogout={handleLogout} /> : 
               <Navigate to="/login" replace />
             } 
           />
