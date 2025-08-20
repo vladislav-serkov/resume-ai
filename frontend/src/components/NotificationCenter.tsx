@@ -183,7 +183,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     });
   };
 
-  const getTimeAgo = (timestamp) => {
+  const getTimeAgo = (timestamp: Date): string => {
     const now = new Date();
     const diff = now - timestamp;
     const minutes = Math.floor(diff / (1000 * 60));
