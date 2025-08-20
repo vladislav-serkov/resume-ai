@@ -22,8 +22,20 @@ import {
   LogOut
 } from 'lucide-react';
 
-const VacancyPage = ({ user, onLogout }) => {
-  const { id } = useParams();
+interface User {
+  name: string;
+  position: string;
+  avatar: string;
+  email: string;
+}
+
+interface VacancyPageProps {
+  user: User;
+  onLogout: () => void;
+}
+
+const VacancyPage: React.FC<VacancyPageProps> = ({ user, onLogout }) => {
+  const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isApplying, setIsApplying] = useState(false);
   const [applicationSent, setApplicationSent] = useState(false);
