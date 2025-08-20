@@ -179,7 +179,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
     });
   };
 
-  const handleInputChange = (field, value) => {
+  const handleInputChange = (field: keyof ProfileData, value: string | boolean): void => {
     setProfileData(prev => ({
       ...prev,
       [field]: value
