@@ -14,10 +14,36 @@ import {
   MoreVertical,
   Trash2,
   Eye,
-  Star
+  Star,
+  LucideIcon
 } from 'lucide-react';
 
-const NotificationCenter = ({ user }) => {
+interface User {
+  name: string;
+  position: string;
+  avatar: string;
+}
+
+interface NotificationCenterProps {
+  user: User;
+}
+
+interface Notification {
+  id: number;
+  type: string;
+  title: string;
+  message: string;
+  timestamp: Date;
+  read: boolean;
+  icon: LucideIcon;
+  color: string;
+  bgColor: string;
+  borderColor: string;
+  action: string;
+  priority?: string;
+}
+
+const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
   const [notifications, setNotifications] = useState([]);
   const [unreadCount, setUnreadCount] = useState(0);
