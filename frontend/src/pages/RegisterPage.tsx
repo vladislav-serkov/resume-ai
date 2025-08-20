@@ -71,7 +71,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister }) => {
     }, 1500);
   };
 
-  const handleInputChange = (e) => {
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>): void => {
     const { name, value, type, checked } = e.target;
     setFormData(prev => ({
       ...prev,
