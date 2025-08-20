@@ -302,7 +302,15 @@ metadata:
   run_ui: true
 
 test_plan:
-  current_focus: []
+  current_focus:
+    - "Node.js Backend Migration with Express + TypeScript"
+    - "Authentication API Endpoints"
+    - "Profile Management API"
+    - "Resume Management API"
+    - "Vacancy Search API"
+    - "Application Management API"
+    - "Notifications API"
+    - "User Statistics API"
   stuck_tasks: []
   test_all: false
   test_priority: "high_first"
