@@ -55,7 +55,53 @@ ChartJS.register(
   Legend
 );
 
-const ProfilePage = ({ user, onLogout }) => {
+interface User {
+  name: string;
+  position: string;
+  avatar: string;
+  email: string;
+}
+
+interface ProfilePageProps {
+  user: User;
+  onLogout: () => void;
+}
+
+interface ProfileData {
+  name: string;
+  email: string;
+  phone: string;
+  location: string;
+  position: string;
+  experience: string;
+  about: string;
+  skills: string[];
+  salary: string;
+  employment: string;
+  remote: boolean;
+}
+
+interface Resume {
+  id: number;
+  name: string;
+  isOriginal: boolean;
+  uploadDate?: string;
+  adaptations?: number;
+  lastUsed?: string;
+  baseVacancy?: string;
+  adaptationDate?: string;
+  matchScore?: number;
+}
+
+interface Stats {
+  totalApplications: number;
+  aiAdaptations: number;
+  responses: number;
+  interviews: number;
+  successRate: number;
+}
+
+const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
