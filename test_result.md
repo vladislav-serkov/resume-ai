@@ -156,14 +156,11 @@ backend:
     file: "/app/backend/src/controllers/resumeController.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "Created CRUD endpoints for resume management: GET, POST, PUT, DELETE /api/resumes"
-      - working: true
-        agent: "testing"
-        comment: "✅ COMPREHENSIVE TESTING COMPLETED: Resume management CRUD operations fully functional. GET /api/resumes (200) returns list of user resumes with adaptation tracking. POST /api/resumes (201) creates new resumes with unique IDs and proper metadata. PUT /api/resumes/:id (200) updates existing resumes. DELETE /api/resumes/:id (200) removes resumes successfully. All endpoints return proper Russian localized responses with success confirmations."
 
   - task: "Vacancy Search API"
     implemented: true
