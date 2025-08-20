@@ -44,10 +44,10 @@ interface Notification {
 }
 
 const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
-  const [isOpen, setIsOpen] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-  const [unreadCount, setUnreadCount] = useState(0);
-  const dropdownRef = useRef(null);
+  const [isOpen, setIsOpen] = useState<boolean>(false);
+  const [notifications, setNotifications] = useState<Notification[]>([]);
+  const [unreadCount, setUnreadCount] = useState<number>(0);
+  const dropdownRef = useRef<HTMLDivElement>(null);
 
   // Мок данные уведомлений
   const mockNotifications = [
