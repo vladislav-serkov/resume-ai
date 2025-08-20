@@ -150,7 +150,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     };
   }, []);
 
-  const toggleNotifications = () => {
+  const toggleNotifications = (): void => {
     setIsOpen(!isOpen);
   };
 
