@@ -15,22 +15,17 @@ import {
   Trash2,
   Eye,
   Star,
-  LucideIcon
+  type LucideIcon
 } from 'lucide-react';
-
-interface User {
-  name: string;
-  position: string;
-  avatar: string;
-}
+import { User as UserType } from '../types';
 
 interface NotificationCenterProps {
-  user: User;
+  user: UserType;
 }
 
 interface Notification {
   id: number;
-  type: string;
+  type: NotificationType;
   title: string;
   message: string;
   timestamp: Date;
@@ -39,24 +34,42 @@ interface Notification {
   color: string;
   bgColor: string;
   borderColor: string;
-  action: string;
-  priority?: string;
+  action?: string;
+  priority?: NotificationPriority;
 }
 
+enum NotificationType {
+  JOB_MATCH = 'job_match',
+  APPLICATION_SENT = 'application_sent',
+  RESPONSE_RECEIVED = 'response_received',
+  INTERVIEW_REMINDER = 'interview_reminder',
+  STATS_UPDATE = 'stats_update',
+  PROFILE_INCOMPLETE = 'profile_incomplete'
+}
+
+enum NotificationPriority {
+  LOW = 'low',
+  MEDIUM = 'medium',
+  HIGH = 'high'
+}
+
+/**
+ * Notification center component with dropdown and management features
+ */
 const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Мок данные уведомлений
+  // Mock notification data
   const mockNotifications: Notification[] = [
     {
       id: 1,
-      type: 'job_match',
+      type: NotificationType.JOB_MATCH,
       title: 'Новая подходящая вакансия',
       message: 'Senior Frontend Developer в Яндекс - 92% соответствие',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 минут назад
+      timestamp: new Date(Date.now() - 5 * 60 * 1000),
       read: false,
       icon: Briefcase,
       color: 'text-blue-600',
@@ -66,10 +79,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     },
     {
       id: 2,
-      type: 'application_sent',
+      type: NotificationType.APPLICATION_SENT,
       title: 'Отклик отправлен',
       message: 'Ваше адаптированное резюме отправлено в React компанию',
-      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 минут назад
+      timestamp: new Date(Date.now() - 15 * 60 * 1000),
       read: false,
       icon: CheckCircle,
       color: 'text-green-600',
@@ -79,24 +92,24 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     },
     {
       id: 3,
-      type: 'response_received',
+      type: NotificationType.RESPONSE_RECEIVED,
       title: 'Ответ от работодателя!',
       message: 'Авито хочет назначить собеседование',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 часа назад
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
       read: true,
       icon: MessageSquare,
       color: 'text-purple-600',
       bgColor: 'bg-purple-50',
       borderColor: 'border-purple-200',
       action: 'Ответить',
-      priority: 'high'
+      priority: NotificationPriority.HIGH
     },
     {
       id: 4,
-      type: 'interview_reminder',
+      type: NotificationType.INTERVIEW_REMINDER,
       title: 'Напоминание о собеседовании',
       message: 'Собеседование с Сбер завтра в 14:00',
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 часа назад
+      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
       read: true,
       icon: Calendar,
       color: 'text-orange-600',
@@ -106,10 +119,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     },
     {
       id: 5,
-      type: 'stats_update',
+      type: NotificationType.STATS_UPDATE,
       title: 'Еженедельная статистика',
       message: 'За неделю: 12 откликов, 3 ответа, 2 собеседования',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 день назад
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
       read: true,
       icon: TrendingUp,
       color: 'text-indigo-600',
@@ -119,10 +132,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     },
     {
       id: 6,
-      type: 'profile_incomplete',
+      type: NotificationType.PROFILE_INCOMPLETE,
       title: 'Профиль не заполнен',
       message: 'Добавьте навыки для лучшего поиска вакансий',
-      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 дня назад
+      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
       read: true,
       icon: User,
       color: 'text-gray-600',
@@ -138,8 +151,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
   }, []);
 
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+    const handleClickOutside = (event: MouseEvent) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
         setIsOpen(false);
       }
     };
@@ -185,7 +198,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
 
   const getTimeAgo = (timestamp: Date): string => {
     const now = new Date();
-    const diff = now - timestamp;
+    const diff = now.getTime() - timestamp.getTime();
     const minutes = Math.floor(diff / (1000 * 60));
     const hours = Math.floor(diff / (1000 * 60 * 60));
     const days = Math.floor(diff / (1000 * 60 * 60 * 24));
@@ -197,7 +210,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
   };
 
   const getPriorityIcon = (notification: Notification): JSX.Element | null => {
-    if (notification.priority === 'high') {
+    if (notification.priority === NotificationPriority.HIGH) {
       return <Star className="h-3 w-3 text-red-500 fill-current" />;
     }
     return null;
@@ -209,6 +222,8 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
       <button
         onClick={toggleNotifications}
         className="relative p-2 text-gray-600 hover:text-gray-900 hover:bg-gray-100 rounded-lg transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        type="button"
+        aria-label="Открыть уведомления"
       >
         <Bell className="h-6 w-6" />
         {unreadCount > 0 && (
@@ -221,142 +236,235 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
       {/* Notification Dropdown */}
       {isOpen && (
         <div className="absolute right-0 top-full mt-2 w-96 bg-white rounded-2xl shadow-2xl border border-gray-200 z-50 max-h-[32rem] overflow-hidden">
-          {/* Header */}
-          <div className="px-6 py-4 border-b border-gray-100">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold text-gray-900">Уведомления</h3>
-              <div className="flex items-center space-x-2">
-                {unreadCount > 0 && (
-                  <button
-                    onClick={markAllAsRead}
-                    className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
-                  >
-                    Прочитать все
-                  </button>
-                )}
-                <button
-                  onClick={() => setIsOpen(false)}
-                  className="p-1 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            </div>
-            {unreadCount > 0 && (
-              <p className="text-sm text-gray-600 mt-1">
-                У вас {unreadCount} непрочитанных уведомлений
-              </p>
-            )}
-          </div>
+          <NotificationHeader 
+            unreadCount={unreadCount}
+            onMarkAllAsRead={markAllAsRead}
+            onClose={() => setIsOpen(false)}
+          />
 
-          {/* Notifications List */}
-          <div className="max-h-80 overflow-y-auto">
-            {notifications.length === 0 ? (
-              <div className="px-6 py-8 text-center">
-                <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
-                <p className="text-gray-500">Нет уведомлений</p>
-              </div>
-            ) : (
-              <div className="divide-y divide-gray-100">
-                {notifications.map((notification) => {
-                  const IconComponent = notification.icon;
-                  return (
-                    <div
-                      key={notification.id}
-                      className={`relative px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer group ${
-                        !notification.read ? 'bg-blue-50/50' : ''
-                      }`}
-                      onClick={() => !notification.read && markAsRead(notification.id)}
-                    >
-                      <div className="flex items-start space-x-3">
-                        {/* Icon */}
-                        <div className={`flex-shrink-0 w-10 h-10 ${notification.bgColor} ${notification.borderColor} border rounded-xl flex items-center justify-center`}>
-                          <IconComponent className={`h-5 w-5 ${notification.color}`} />
-                        </div>
+          <NotificationsList 
+            notifications={notifications}
+            onMarkAsRead={markAsRead}
+            onDelete={deleteNotification}
+            getTimeAgo={getTimeAgo}
+            getPriorityIcon={getPriorityIcon}
+          />
 
-                        {/* Content */}
-                        <div className="flex-1 min-w-0">
-                          <div className="flex items-start justify-between">
-                            <div className="flex-1">
-                              <div className="flex items-center space-x-2">
-                                <p className={`text-sm font-medium text-gray-900 ${!notification.read ? 'font-semibold' : ''}`}>
-                                  {notification.title}
-                                </p>
-                                {getPriorityIcon(notification)}
-                              </div>
-                              <p className="text-sm text-gray-600 mt-1 leading-relaxed">
-                                {notification.message}
-                              </p>
-                              <div className="flex items-center justify-between mt-2">
-                                <p className="text-xs text-gray-500">
-                                  {getTimeAgo(notification.timestamp)}
-                                </p>
-                                {notification.action && (
-                                  <button className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
-                                    {notification.action}
-                                  </button>
-                                )}
-                              </div>
-                            </div>
-
-                            {/* Actions */}
-                            <div className="flex items-center space-x-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                              {!notification.read && (
-                                <button
-                                  onClick={(e) => {
-                                    e.stopPropagation();
-                                    markAsRead(notification.id);
-                                  }}
-                                  className="p-1 text-gray-400 hover:text-blue-600 rounded transition-colors"
-                                  title="Отметить как прочитанное"
-                                >
-                                  <Eye className="h-3 w-3" />
-                                </button>
-                              )}
-                              <button
-                                onClick={(e) => {
-                                  e.stopPropagation();
-                                  deleteNotification(notification.id);
-                                }}
-                                className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
-                                title="Удалить уведомление"
-                              >
-                                <Trash2 className="h-3 w-3" />
-                              </button>
-                            </div>
-                          </div>
-
-                          {/* Unread indicator */}
-                          {!notification.read && (
-                            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-blue-600 rounded-full"></div>
-                          )}
-                        </div>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            )}
-          </div>
-
-          {/* Footer */}
           {notifications.length > 0 && (
-            <div className="px-6 py-3 border-t border-gray-100 bg-gray-50">
-              <button 
-                className="w-full text-center text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
-                onClick={() => {
-                  setIsOpen(false);
-                  // Navigate to notifications page
-                }}
-              >
-                Посмотреть все уведомления
-              </button>
-            </div>
+            <NotificationFooter onClose={() => setIsOpen(false)} />
           )}
         </div>
       )}
     </div>
   );
 };
+
+/**
+ * Notification dropdown header
+ */
+interface NotificationHeaderProps {
+  unreadCount: number;
+  onMarkAllAsRead: () => void;
+  onClose: () => void;
+}
+
+const NotificationHeader: React.FC<NotificationHeaderProps> = ({
+  unreadCount,
+  onMarkAllAsRead,
+  onClose
+}) => (
+  <div className="px-6 py-4 border-b border-gray-100">
+    <div className="flex items-center justify-between">
+      <h3 className="text-lg font-semibold text-gray-900">Уведомления</h3>
+      <div className="flex items-center space-x-2">
+        {unreadCount > 0 && (
+          <button
+            onClick={onMarkAllAsRead}
+            className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
+            type="button"
+          >
+            Прочитать все
+          </button>
+        )}
+        <button
+          onClick={onClose}
+          className="p-1 text-gray-400 hover:text-gray-600 rounded-lg transition-colors"
+          type="button"
+          aria-label="Закрыть"
+        >
+          <X className="h-4 w-4" />
+        </button>
+      </div>
+    </div>
+    {unreadCount > 0 && (
+      <p className="text-sm text-gray-600 mt-1">
+        У вас {unreadCount} непрочитанных уведомлений
+      </p>
+    )}
+  </div>
+);
+
+/**
+ * Notifications list component
+ */
+interface NotificationsListProps {
+  notifications: Notification[];
+  onMarkAsRead: (id: number) => void;
+  onDelete: (id: number) => void;
+  getTimeAgo: (timestamp: Date) => string;
+  getPriorityIcon: (notification: Notification) => JSX.Element | null;
+}
+
+const NotificationsList: React.FC<NotificationsListProps> = ({
+  notifications,
+  onMarkAsRead,
+  onDelete,
+  getTimeAgo,
+  getPriorityIcon
+}) => (
+  <div className="max-h-80 overflow-y-auto">
+    {notifications.length === 0 ? (
+      <EmptyNotifications />
+    ) : (
+      <div className="divide-y divide-gray-100">
+        {notifications.map((notification) => (
+          <NotificationItem
+            key={notification.id}
+            notification={notification}
+            onMarkAsRead={onMarkAsRead}
+            onDelete={onDelete}
+            getTimeAgo={getTimeAgo}
+            getPriorityIcon={getPriorityIcon}
+          />
+        ))}
+      </div>
+    )}
+  </div>
+);
+
+/**
+ * Empty notifications state
+ */
+const EmptyNotifications: React.FC = () => (
+  <div className="px-6 py-8 text-center">
+    <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
+    <p className="text-gray-500">Нет уведомлений</p>
+  </div>
+);
+
+/**
+ * Individual notification item
+ */
+interface NotificationItemProps extends NotificationsListProps {
+  notification: Notification;
+}
+
+const NotificationItem: React.FC<NotificationItemProps> = ({
+  notification,
+  onMarkAsRead,
+  onDelete,
+  getTimeAgo,
+  getPriorityIcon
+}) => {
+  const IconComponent = notification.icon;
+  
+  return (
+    <div
+      className={`relative px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer group ${
+        !notification.read ? 'bg-blue-50/50' : ''
+      }`}
+      onClick={() => !notification.read && onMarkAsRead(notification.id)}
+    >
+      <div className="flex items-start space-x-3">
+        {/* Icon */}
+        <div className={`flex-shrink-0 w-10 h-10 ${notification.bgColor} ${notification.borderColor} border rounded-xl flex items-center justify-center`}>
+          <IconComponent className={`h-5 w-5 ${notification.color}`} />
+        </div>
+
+        {/* Content */}
+        <div className="flex-1 min-w-0">
+          <div className="flex items-start justify-between">
+            <div className="flex-1">
+              <div className="flex items-center space-x-2">
+                <p className={`text-sm font-medium text-gray-900 ${!notification.read ? 'font-semibold' : ''}`}>
+                  {notification.title}
+                </p>
+                {getPriorityIcon(notification)}
+              </div>
+              <p className="text-sm text-gray-600 mt-1 leading-relaxed">
+                {notification.message}
+              </p>
+              <div className="flex items-center justify-between mt-2">
+                <p className="text-xs text-gray-500">
+                  {getTimeAgo(notification.timestamp)}
+                </p>
+                {notification.action && (
+                  <button className="text-xs text-blue-600 hover:text-blue-800 font-medium transition-colors">
+                    {notification.action}
+                  </button>
+                )}
+              </div>
+            </div>
+
+            {/* Actions */}
+            <div className="flex items-center space-x-1 ml-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              {!notification.read && (
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    onMarkAsRead(notification.id);
+                  }}
+                  className="p-1 text-gray-400 hover:text-blue-600 rounded transition-colors"
+                  title="Отметить как прочитанное"
+                  type="button"
+                >
+                  <Eye className="h-3 w-3" />
+                </button>
+              )}
+              <button
+                onClick={(e) => {
+                  e.stopPropagation();
+                  onDelete(notification.id);
+                }}
+                className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
+                title="Удалить уведомление"
+                type="button"
+              >
+                <Trash2 className="h-3 w-3" />
+              </button>
+            </div>
+          </div>
+
+          {/* Unread indicator */}
+          {!notification.read && (
+            <div className="absolute left-2 top-1/2 transform -translate-y-1/2 w-2 h-2 bg-blue-600 rounded-full" />
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+/**
+ * Notification dropdown footer
+ */
+interface NotificationFooterProps {
+  onClose: () => void;
+}
+
+const NotificationFooter: React.FC<NotificationFooterProps> = ({ onClose }) => (
+  <div className="px-6 py-3 border-t border-gray-100 bg-gray-50">
+    <button 
+      className="w-full text-center text-sm text-gray-600 hover:text-gray-900 font-medium transition-colors"
+      onClick={() => {
+        onClose();
+        // Navigate to notifications page
+      }}
+      type="button"
+    >
+      Посмотреть все уведомления
+    </button>
+  </div>
+);
 
 export default NotificationCenter;
