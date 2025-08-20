@@ -57,7 +57,7 @@ function App(): JSX.Element {
             path="/dashboard" 
             element={
               isAuthenticated ? 
-              <Dashboard user={user} onLogout={handleLogout} /> : 
+              <Dashboard user={user!} onLogout={handleLogout} /> : 
               <Navigate to="/login" replace />
             } 
           />
