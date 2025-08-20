@@ -43,7 +43,7 @@ const VacancyPage: React.FC<VacancyPageProps> = ({ user, onLogout }) => {
 
   // Mock vacancy data
   const vacancy = {
-    id: parseInt(id),
+    id: parseInt(id || '1'),
     title: "Senior Frontend Developer",
     company: "Яндекс",
     location: "Москва",
