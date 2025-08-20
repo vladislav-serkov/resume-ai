@@ -2,7 +2,31 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Sparkles, Mail, Lock, User, Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react';
 
-const RegisterPage = ({ onRegister }) => {
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  position: string;
+  resumeUploaded: boolean;
+}
+
+interface RegisterPageProps {
+  onRegister: (userData: User) => void;
+}
+
+interface FormData {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+  position: string;
+  experience: string;
+  agreeToTerms: boolean;
+}
+
+const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
