@@ -43,7 +43,7 @@ const RegisterPage: React.FC<RegisterPageProps> = ({ onRegister }) => {
     agreeToTerms: false
   });
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
     
     if (step === 1) {
