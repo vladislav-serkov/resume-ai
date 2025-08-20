@@ -154,7 +154,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     setIsOpen(!isOpen);
   };
 
-  const markAsRead = (notificationId) => {
+  const markAsRead = (notificationId: number): void => {
     setNotifications(prev => 
       prev.map(notification => 
         notification.id === notificationId 
