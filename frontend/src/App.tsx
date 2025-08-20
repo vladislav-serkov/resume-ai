@@ -19,7 +19,7 @@ function App(): JSX.Element {
   const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
   const [user, setUser] = useState<User | null>(null);
 
-  const handleLogin = (userData) => {
+  const handleLogin = (userData: User): void => {
     setIsAuthenticated(true);
     setUser(userData);
   };
