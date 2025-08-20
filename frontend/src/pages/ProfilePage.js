@@ -157,6 +157,9 @@ const ProfilePage = ({ user, onLogout }) => {
             </div>
 
             <div className="flex items-center space-x-4">
+              {/* Resume and Stats Mini Components */}
+              <ResumeMini user={user} />
+              <StatsMini user={user} />
               <NotificationCenter user={user} />
               
               <div className="flex items-center space-x-3">
