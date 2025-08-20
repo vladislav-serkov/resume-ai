@@ -611,11 +611,157 @@ const ProfilePage = ({ user, onLogout }) => {
               </div>
             </div>
 
-            {/* Charts placeholder */}
+            {/* Charts */}
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Activity Chart */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">Активность за месяц</h3>
+                <div style={{ height: '300px' }}>
+                  <Line 
+                    data={{
+                      labels: ['1 нед', '2 нед', '3 нед', '4 нед'],
+                      datasets: [
+                        {
+                          label: 'Отклики',
+                          data: [4, 7, 6, 8],
+                          borderColor: 'rgb(59, 130, 246)',
+                          backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                          tension: 0.4,
+                        },
+                        {
+                          label: 'AI-адаптации',
+                          data: [8, 12, 10, 15],
+                          borderColor: 'rgb(147, 51, 234)',
+                          backgroundColor: 'rgba(147, 51, 234, 0.1)',
+                          tension: 0.4,
+                        },
+                        {
+                          label: 'Ответы',
+                          data: [1, 2, 2, 3],
+                          borderColor: 'rgb(16, 185, 129)',
+                          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                          tension: 0.4,
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'top',
+                          labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                          }
+                        }
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          ticks: {
+                            stepSize: 1
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+
+              {/* Success Rate Chart */}
+              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-6">Динамика успешности</h3>
+                <div style={{ height: '300px' }}>
+                  <Line 
+                    data={{
+                      labels: ['1 нед', '2 нед', '3 нед', '4 нед'],
+                      datasets: [
+                        {
+                          label: 'Успешность (%)',
+                          data: [25, 29, 33, 38],
+                          borderColor: 'rgb(16, 185, 129)',
+                          backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                          tension: 0.4,
+                          fill: true,
+                        }
+                      ]
+                    }}
+                    options={{
+                      responsive: true,
+                      maintainAspectRatio: false,
+                      plugins: {
+                        legend: {
+                          position: 'top',
+                          labels: {
+                            usePointStyle: true,
+                            padding: 20,
+                          }
+                        }
+                      },
+                      scales: {
+                        y: {
+                          beginAtZero: true,
+                          max: 100,
+                          ticks: {
+                            callback: function(value) {
+                              return value + '%';
+                            }
+                          }
+                        }
+                      }
+                    }}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Weekly Activity Chart */}
             <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Активность за месяц</h3>
-              <div className="h-64 bg-gray-50 rounded-lg flex items-center justify-center text-gray-500">
-                График активности (будет добавлен)
+              <h3 className="text-lg font-semibold text-gray-900 mb-6">Активность по дням недели</h3>
+              <div style={{ height: '250px' }}>
+                <Line 
+                  data={{
+                    labels: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
+                    datasets: [
+                      {
+                        label: 'Отклики',
+                        data: [3, 2, 4, 5, 3, 1, 0],
+                        borderColor: 'rgb(59, 130, 246)',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                      },
+                      {
+                        label: 'Просмотры вакансий',
+                        data: [12, 8, 15, 18, 14, 6, 3],
+                        borderColor: 'rgb(245, 158, 11)',
+                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
+                        tension: 0.4,
+                      }
+                    ]
+                  }}
+                  options={{
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                      legend: {
+                        position: 'top',
+                        labels: {
+                          usePointStyle: true,
+                          padding: 20,
+                        }
+                      }
+                    },
+                    scales: {
+                      y: {
+                        beginAtZero: true,
+                        ticks: {
+                          stepSize: 1
+                        }
+                      }
+                    }
+                  }}
+                />
               </div>
             </div>
           </div>
