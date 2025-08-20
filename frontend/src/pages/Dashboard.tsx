@@ -25,7 +25,19 @@ import {
   Filter
 } from 'lucide-react';
 
-const Dashboard = ({ user, onLogout }) => {
+interface User {
+  name: string;
+  position: string;
+  avatar: string;
+  email: string;
+}
+
+interface DashboardProps {
+  user: User;
+  onLogout: () => void;
+}
+
+const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedFilters, setSelectedFilters] = useState({
