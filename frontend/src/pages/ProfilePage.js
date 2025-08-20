@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import NotificationCenter from '../components/NotificationCenter';
 import ResumeBuilder from '../components/ResumeBuilder';
+import StatsMini from '../components/StatsMini';
+import ResumeMini from '../components/ResumeMini';
 import { 
   ArrowLeft, 
   User, 
@@ -30,6 +32,28 @@ import {
   Star,
   Clock
 } from 'lucide-react';
+import {
+  Chart as ChartJS,
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+} from 'chart.js';
+import { Line } from 'react-chartjs-2';
+
+// Регистрируем компоненты Chart.js
+ChartJS.register(
+  CategoryScale,
+  LinearScale,
+  PointElement,
+  LineElement,
+  Title,
+  Tooltip,
+  Legend
+);
 
 const ProfilePage = ({ user, onLogout }) => {
   const navigate = useNavigate();
