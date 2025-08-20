@@ -24,7 +24,7 @@ function App(): JSX.Element {
     setUser(userData);
   };
 
-  const handleLogout = () => {
+  const handleLogout = (): void => {
     setIsAuthenticated(false);
     setUser(null);
   };
