@@ -142,7 +142,7 @@ ${user.name}`
     }, 3000);
   };
 
-  const getMatchColor = (score) => {
+  const getMatchColor = (score: number): string => {
     if (score >= 90) return 'from-green-500 to-emerald-500';
     if (score >= 70) return 'from-blue-500 to-cyan-500';
     if (score >= 50) return 'from-orange-500 to-yellow-500';
