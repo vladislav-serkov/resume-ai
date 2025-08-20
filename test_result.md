@@ -201,14 +201,11 @@ backend:
     file: "/app/backend/src/controllers/notificationController.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "Created notification management endpoints: GET /api/notifications, PUT /api/notifications/:id/read, DELETE /api/notifications/:id"
-      - working: true
-        agent: "testing"
-        comment: "✅ COMPREHENSIVE TESTING COMPLETED: Notification management endpoints fully functional. GET /api/notifications (200) returns user notifications with proper Russian localization, read/unread status, and notification types (job_match, application_sent, etc.). PUT /api/notifications/:id/read (200) successfully marks individual notifications as read. PUT /api/notifications/read-all (200) marks all notifications as read. DELETE /api/notifications/:id (200) removes notifications. All endpoints handle Russian text and timestamps correctly."
 
   - task: "User Statistics API"
     implemented: true
