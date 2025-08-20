@@ -105,101 +105,29 @@
 user_problem_statement: "1. Перепиши бэкенд на node.js 2. Полностью свяжи бэкенд с фронтендом (для всей логике на фронте должен быть эндпоинт на бэке) 3. На бэкенде не реализуй логику просто создай заглушки"
 
 backend:
-  - task: "Node.js Backend Migration with Express + TypeScript"
+  - task: "FastAPI Server with MongoDB Integration"
     implemented: true
     working: true
-    file: "/app/backend/src/server.ts"
+    file: "/app/backend/server.py"
     stuck_count: 0
     priority: "high"
-    needs_retesting: true
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
-        comment: "Successfully migrated from FastAPI to Node.js with Express + TypeScript. All API endpoints created with mock data. Server running on port 8001."
+        comment: "Server running successfully on port 8001 with /api endpoints, MongoDB connected"
 
-  - task: "Authentication API Endpoints"
+  - task: "Status Check API Endpoints"
     implemented: true
     working: true
-    file: "/app/backend/src/controllers/authController.ts"
+    file: "/app/backend/server.py"
     stuck_count: 0
-    priority: "high"
-    needs_retesting: true
+    priority: "medium"
+    needs_retesting: false
     status_history:
       - working: true
         agent: "main"
-        comment: "Created POST /api/auth/login and POST /api/auth/register endpoints with mock user data"
-
-  - task: "Profile Management API"
-    implemented: true
-    working: true
-    file: "/app/backend/src/controllers/profileController.ts"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-      - working: true
-        agent: "main"
-        comment: "Created GET /api/profile and PUT /api/profile endpoints for user profile management"
-
-  - task: "Resume Management API"
-    implemented: true
-    working: true
-    file: "/app/backend/src/controllers/resumeController.ts"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-      - working: true
-        agent: "main"
-        comment: "Created CRUD endpoints for resume management: GET, POST, PUT, DELETE /api/resumes"
-
-  - task: "Vacancy Search API"
-    implemented: true
-    working: true
-    file: "/app/backend/src/controllers/vacancyController.ts"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-      - working: true
-        agent: "main"
-        comment: "Created GET /api/vacancies with filters and GET /api/vacancies/:id endpoints with mock job data"
-
-  - task: "Application Management API"
-    implemented: true
-    working: true
-    file: "/app/backend/src/controllers/applicationController.ts"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-      - working: true
-        agent: "main"
-        comment: "Created job application endpoints: GET /api/applications, POST /api/applications, GET /api/applications/:id"
-
-  - task: "Notifications API"
-    implemented: true
-    working: true
-    file: "/app/backend/src/controllers/notificationController.ts"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-      - working: true
-        agent: "main"
-        comment: "Created notification management endpoints: GET /api/notifications, PUT /api/notifications/:id/read, DELETE /api/notifications/:id"
-
-  - task: "User Statistics API"
-    implemented: true
-    working: true
-    file: "/app/backend/src/controllers/statsController.ts"
-    stuck_count: 0
-    priority: "high"
-    needs_retesting: true
-    status_history:
-      - working: true
-        agent: "main"
-        comment: "Created GET /api/stats endpoint for user statistics with mock data"
+        comment: "API endpoints /api/status (GET/POST) working with MongoDB integration"
 
 frontend:
   - task: "React Application with Routing"
