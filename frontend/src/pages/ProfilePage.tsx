@@ -120,7 +120,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
     remote: true
   });
 
-  const mockResumes = [
+  const mockResumes: Resume[] = [
     {
       id: 1,
       name: 'Основное резюме',
