@@ -73,7 +73,7 @@ function App(): JSX.Element {
             path="/profile" 
             element={
               isAuthenticated ? 
-              <ProfilePage user={user} onLogout={handleLogout} /> : 
+              <ProfilePage user={user!} onLogout={handleLogout} /> : 
               <Navigate to="/login" replace />
             } 
           />
