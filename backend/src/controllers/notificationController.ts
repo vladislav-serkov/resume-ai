@@ -99,13 +99,13 @@ export class NotificationController {
         message: 'Notifications retrieved successfully'
       };
 
-      return res.json(response);
+      res.json(response);
     } catch (error) {
       const response: ApiResponse = {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to get notifications'
       };
-      return res.status(500).json(response);
+      res.status(500).json(response);
     }
   }
 
@@ -118,13 +118,13 @@ export class NotificationController {
         message: `Notification ${id} marked as read`
       };
 
-      return res.json(response);
+      res.json(response);
     } catch (error) {
       const response: ApiResponse = {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to mark notification as read'
       };
-      return res.status(400).json(response);
+      res.status(400).json(response);
     }
   }
 
@@ -135,13 +135,13 @@ export class NotificationController {
         message: 'All notifications marked as read'
       };
 
-      return res.json(response);
+      res.json(response);
     } catch (error) {
       const response: ApiResponse = {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to mark all notifications as read'
       };
-      return res.status(400).json(response);
+      res.status(400).json(response);
     }
   }
 
@@ -154,179 +154,13 @@ export class NotificationController {
         message: `Notification ${id} deleted successfully`
       };
 
-      return res.json(response);
+      res.json(response);
     } catch (error) {
       const response: ApiResponse = {
         success: false,
         error: error instanceof Error ? error.message : 'Failed to delete notification'
       };
-      return res.status(400).json(response);
-    }
-  }
-
-  static async bulkMarkAsRead(req: Request, res: Response<ApiResponse<{ updatedCount: number }>>) {
-    try {
-      const { ids } = req.body;
-
-      if (!ids || !Array.isArray(ids)) {
-        return res.status(400).json({
-          success: false,
-          error: 'IDs массив обязателен'
-        });
-      }
-
-      // Mock bulk mark as read operation
-      const updatedCount = ids.length;
-
-      const response: ApiResponse<{ updatedCount: number }> = {
-        success: true,
-        data: { updatedCount },
-        message: `${updatedCount} уведомлений отмечено как прочитанные`
-      };
-
-      return res.json(response);
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Ошибка при массовом отмечании уведомлений как прочитанные'
-      });
-    }
-  }
-
-  static async bulkDelete(req: Request, res: Response<ApiResponse<{ deletedCount: number }>>) {
-    try {
-      const { ids } = req.body;
-
-      if (!ids || !Array.isArray(ids)) {
-        return res.status(400).json({
-          success: false,
-          error: 'IDs массив обязателен'
-        });
-      }
-
-      // Mock bulk delete operation
-      const deletedCount = ids.length;
-
-      const response: ApiResponse<{ deletedCount: number }> = {
-        success: true,
-        data: { deletedCount },
-        message: `${deletedCount} уведомлений удалено`
-      };
-
-      return res.json(response);
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Ошибка при массовом удалении уведомлений'
-      });
-    }
-  }
-
-  static async deleteAllRead(_req: Request, res: Response<ApiResponse<{ deletedCount: number }>>) {
-    try {
-      // Mock delete all read notifications
-      const deletedCount = 4; // Mock number of read notifications
-
-      const response: ApiResponse<{ deletedCount: number }> = {
-        success: true,
-        data: { deletedCount },
-        message: `${deletedCount} прочитанных уведомлений удалено`
-      };
-
-      return res.json(response);
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Ошибка при удалении прочитанных уведомлений'
-      });
-    }
-  }
-
-  static async getUnreadCount(_req: Request, res: Response<ApiResponse<{ count: number }>>) {
-    try {
-      // Mock unread count
-      const unreadCount = 2; // Based on mock data
-
-      const response: ApiResponse<{ count: number }> = {
-        success: true,
-        data: { count: unreadCount },
-        message: 'Количество непрочитанных уведомлений получено'
-      };
-
-      return res.json(response);
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Ошибка при получении количества непрочитанных уведомлений'
-      });
-    }
-  }
-
-  static async getNotificationsByType(req: Request, res: Response<ApiResponse<Notification[]>>) {
-    try {
-      const { type } = req.params;
-      const { limit, offset } = req.query;
-
-      // Mock filtered notifications by type
-      const allNotifications: Notification[] = [
-        {
-          id: '1',
-          userId: '1',
-          type: 'job_match',
-          title: 'Новая подходящая вакансия',
-          message: 'Senior Frontend Developer в Яндекс - 92% соответствие',
-          timestamp: new Date(Date.now() - 5 * 60 * 1000),
-          read: false,
-          icon: 'Briefcase',
-          color: 'text-blue-600',
-          bgColor: 'bg-blue-50',
-          borderColor: 'border-blue-200',
-          action: 'Посмотреть вакансию'
-        },
-        {
-          id: '2',
-          userId: '1',
-          type: 'application_sent',
-          title: 'Отклик отправлен',
-          message: 'Ваше адаптированное резюме отправлено в React компанию',
-          timestamp: new Date(Date.now() - 15 * 60 * 1000),
-          read: false,
-          icon: 'CheckCircle',
-          color: 'text-green-600',
-          bgColor: 'bg-green-50',
-          borderColor: 'border-green-200',
-          action: 'Отследить статус'
-        }
-      ];
-
-      const filteredNotifications = type === 'all' 
-        ? allNotifications 
-        : allNotifications.filter(n => n.type === type);
-
-      // Apply pagination
-      const startIndex = parseInt(offset as string || '0');
-      const limitNum = parseInt(limit as string || '10');
-      const paginatedNotifications = filteredNotifications.slice(startIndex, startIndex + limitNum);
-
-      const response: ApiResponse<Notification[]> = {
-        success: true,
-        data: paginatedNotifications,
-        message: 'Уведомления по типу получены',
-        meta: {
-          total: filteredNotifications.length,
-          count: paginatedNotifications.length,
-          offset: startIndex,
-          limit: limitNum,
-          hasMore: startIndex + limitNum < filteredNotifications.length
-        }
-      };
-
-      return res.json(response);
-    } catch (error) {
-      return res.status(500).json({
-        success: false,
-        error: 'Ошибка при получении уведомлений по типу'
-      });
+      res.status(400).json(response);
     }
   }
 }

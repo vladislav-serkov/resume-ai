@@ -6,8 +6,6 @@ import vacancyRoutes from './vacancies';
 import applicationRoutes from './applications';
 import notificationRoutes from './notifications';
 import statsRoutes from './stats';
-import settingsRoutes from './settings';
-import aiRoutes from './ai';
 
 const router = Router();
 
@@ -28,7 +26,5 @@ router.use('/vacancies', vacancyRoutes);
 router.use('/applications', applicationRoutes);
 router.use('/notifications', notificationRoutes);
 router.use('/stats', statsRoutes);
-router.use('/settings', settingsRoutes);
-router.use('/ai', aiRoutes);
 
 export default router;

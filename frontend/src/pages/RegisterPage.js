@@ -1,13 +1,12 @@
 import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Sparkles, Mail, Lock, User, Eye, EyeOff, ArrowLeft, CheckCircle } from 'lucide-react';
-import { useAuth } from '../contexts/AuthContext';
 
-const RegisterPage = () => {
+const RegisterPage = ({ onRegister }) => {
   const navigate = useNavigate();
-  const { register, loading } = useAuth();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     firstName: '',
@@ -28,12 +27,24 @@ const RegisterPage = () => {
       return;
     }
 
-    const result = await register(formData);
-    
-    if (result.success) {
+    setIsLoading(true);
+
+    // Simulate API call
+    setTimeout(() => {
+      const mockUser = {
+        id: 1,
+        name: `${formData.firstName} ${formData.lastName}`,
+        email: formData.email,
+        avatar: `${formData.firstName[0]}${formData.lastName[0]}`,
+        position: formData.position,
+        experience: formData.experience,
+        resumeUploaded: false
+      };
+      
+      onRegister(mockUser);
+      setIsLoading(false);
       navigate('/dashboard');
-    }
-    // Error handling is done in AuthContext with toast notifications
+    }, 1500);
   };
 
   const handleInputChange = (e) => {
@@ -284,10 +295,10 @@ const RegisterPage = () => {
             {/* Submit Button */}
             <button
               type="submit"
-              disabled={(step === 1 && !isStep1Valid) || (step === 2 && (!isStep2Valid || loading))}
+              disabled={(step === 1 && !isStep1Valid) || (step === 2 && (!isStep2Valid || isLoading))}
               className="w-full flex items-center justify-center py-3 px-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:opacity-90 focus:ring-4 focus:ring-blue-200 disabled:opacity-50 disabled:cursor-not-allowed transition-all font-semibold"
             >
-              {loading ? (
+              {isLoading ? (
                 <>
                   <div className="animate-spin rounded-full h-5 w-5 border-b-2 border-white mr-2"></div>
                   Создание аккаунта...

@@ -1,12 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
-import { useAuth } from '../contexts/AuthContext';
-import { apiService } from '../services/api';
-import { useApiData, useFormSubmit } from '../hooks/useApi';
 import NotificationCenter from '../components/NotificationCenter';
 import ResumeBuilder from '../components/ResumeBuilder';
-import LoadingSpinner from '../components/LoadingSpinner';
 import { 
   ArrowLeft, 
   User, 
@@ -36,136 +31,82 @@ import {
   Clock
 } from 'lucide-react';
 
-const ProfilePage = () => {
+const ProfilePage = ({ user, onLogout }) => {
   const navigate = useNavigate();
-  const { user, logout } = useAuth();
   const [activeTab, setActiveTab] = useState('profile');
   const [isEditing, setIsEditing] = useState(false);
   const [showResumeBuilder, setShowResumeBuilder] = useState(false);
-
-  // API hooks for data fetching
-  const { 
-    data: profileApiData, 
-    loading: profileLoading, 
-    error: profileError,
-    refetch: refetchProfile 
-  } = useApiData(() => apiService.profile.get(), [], {
-    showErrorToast: false
-  });
-
-  const { 
-    data: resumes = [], 
-    loading: resumesLoading, 
-    error: resumesError,
-    refetch: refetchResumes 
-  } = useApiData(() => apiService.resumes.getAll(), [], {
-    showErrorToast: false
-  });
-
-  const { 
-    data: stats = {}, 
-    loading: statsLoading, 
-    error: statsError 
-  } = useApiData(() => apiService.stats.get(), [], {
-    showErrorToast: false
-  });
-
-  // Get profile data from API or use user data as fallback
-  const apiProfile = profileApiData?.data;
   const [profileData, setProfileData] = useState({
-    name: apiProfile?.name || user?.name || '',
-    email: apiProfile?.email || user?.email || '',
-    phone: apiProfile?.phone || '+7 (999) 123-45-67',
-    location: apiProfile?.location || 'Москва',
-    position: apiProfile?.position || user?.position || '',
-    experience: apiProfile?.experience || '5+ лет',
-    about: apiProfile?.about || 'Опытный Frontend разработчик с глубокими знаниями React, TypeScript и современных технологий веб-разработки.',
-    skills: apiProfile?.skills || ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Redux'],
-    salary: apiProfile?.salary || '200 000 - 350 000 ₽',
-    employment: apiProfile?.employment || 'Полная занятость',
-    remote: apiProfile?.remote || true
+    name: user.name,
+    email: user.email,
+    phone: '+7 (999) 123-45-67',
+    location: 'Москва',
+    position: user.position,
+    experience: '5+ лет',
+    about: 'Опытный Frontend разработчик с глубокими знаниями React, TypeScript и современных технологий веб-разработки. Имею опыт руководства командой и менторства junior разработчиков.',
+    skills: ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Redux', 'Next.js', 'GraphQL', 'Jest', 'Docker', 'AWS'],
+    salary: '200 000 - 350 000 ₽',
+    employment: 'Полная занятость',
+    remote: true
   });
 
-  // Update profile data when API data loads
-  React.useEffect(() => {
-    if (apiProfile) {
-      setProfileData({
-        name: apiProfile.name || user?.name || '',
-        email: apiProfile.email || user?.email || '',
-        phone: apiProfile.phone || '+7 (999) 123-45-67',
-        location: apiProfile.location || 'Москва',
-        position: apiProfile.position || user?.position || '',
-        experience: apiProfile.experience || '5+ лет',
-        about: apiProfile.about || 'Опытный Frontend разработчик...',
-        skills: apiProfile.skills || ['React', 'TypeScript'],
-        salary: apiProfile.salary || '200 000 - 350 000 ₽',
-        employment: apiProfile.employment || 'Полная занятость',
-        remote: apiProfile.remote || true
-      });
-    }
-  }, [apiProfile, user]);
-
-  // Form submission for profile updates
-  const { loading: saving, submit: saveProfile } = useFormSubmit(
-    (data) => apiService.profile.update(data),
+  const mockResumes = [
     {
-      successMessage: 'Профиль успешно обновлен',
-      onSuccess: () => {
-        setIsEditing(false);
-        refetchProfile();
-      }
-    }
-  );
-
-  // Resume operations
-  const { loading: resumeDeleting, submit: deleteResume } = useFormSubmit(
-    (id) => apiService.resumes.delete(id),
+      id: 1,
+      name: 'Основное резюме',
+      isOriginal: true,
+      uploadDate: '2024-01-10',
+      adaptations: 15,
+      lastUsed: '2024-01-15'
+    },
     {
-      successMessage: 'Резюме удалено',
-      onSuccess: refetchResumes
-    }
-  );
-
-  const { loading: resumeUploading, submit: uploadResume } = useFormSubmit(
-    (file) => apiService.resumes.upload(file),
+      id: 2,
+      name: 'Адаптированное для Яндекс',
+      isOriginal: false,
+      baseVacancy: 'Senior Frontend Developer - Яндекс',
+      adaptationDate: '2024-01-15',
+      matchScore: 92
+    },
     {
-      successMessage: 'Резюме загружено успешно',
-      onSuccess: refetchResumes
+      id: 3,
+      name: 'Адаптированное для Avito',
+      isOriginal: false,
+      baseVacancy: 'React Developer - Avito',
+      adaptationDate: '2024-01-14',
+      matchScore: 87
     }
-  );
+  ];
 
-  // Get actual data from API
-  const displayResumes = resumes?.data || [];
-  const displayStats = stats?.data || {
-    totalApplications: 0,
-    aiAdaptations: 0,
-    responses: 0,
-    interviews: 0,
-    successRate: 0
+  const mockStats = {
+    totalApplications: 24,
+    aiAdaptations: 45,
+    responses: 8,
+    interviews: 3,
+    successRate: 33
   };
 
-  const handleSave = async () => {
-    await saveProfile(profileData);
+  const handleSave = () => {
+    setIsEditing(false);
+    // Simulate API call
+    console.log('Saving profile data:', profileData);
   };
 
   const handleCancel = () => {
     setIsEditing(false);
-    // Reset data to API data or original user data
-    if (apiProfile) {
-      setProfileData({
-        name: apiProfile.name || user?.name || '',
-        email: apiProfile.email || user?.email || '',
-        phone: apiProfile.phone || '+7 (999) 123-45-67',
-        location: apiProfile.location || 'Москва',
-        position: apiProfile.position || user?.position || '',
-        experience: apiProfile.experience || '5+ лет',
-        about: apiProfile.about || 'Опытный Frontend разработчик...',
-        skills: apiProfile.skills || ['React', 'TypeScript'],
-        salary: apiProfile.salary || '200 000 - 350 000 ₽',
-        employment: apiProfile.employment || 'Полная занятость',
-        remote: apiProfile.remote || true
-      });
-    }
+    // Reset data
+    setProfileData({
+      name: user.name,
+      email: user.email,
+      phone: '+7 (999) 123-45-67',
+      location: 'Москва',
+      position: user.position,
+      experience: '5+ лет',
+      about: 'Опытный Frontend разработчик с глубокими знаниями React, TypeScript и современных технологий веб-разработки.',
+      skills: ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Redux', 'Next.js', 'GraphQL', 'Jest', 'Docker', 'AWS'],
+      salary: '200 000 - 350 000 ₽',
+      employment: 'Полная занятость',
+      remote: true
+    });
   };
 
   const handleInputChange = (field, value) => {
@@ -173,35 +114,6 @@ const ProfilePage = () => {
       ...prev,
       [field]: value
     }));
-  };
-
-  // Resume handlers
-  const handleResumeUpload = async (event) => {
-    const file = event.target.files[0];
-    if (file) {
-      await uploadResume(file);
-    }
-  };
-
-  const handleResumeDelete = async (resumeId) => {
-    if (window.confirm('Вы уверены, что хотите удалить это резюме?')) {
-      await deleteResume(resumeId);
-    }
-  };
-
-  const handleResumeDownload = async (resumeId) => {
-    try {
-      const response = await apiService.resumes.getById(resumeId);
-      // Handle download logic here - for now just show success
-      toast.success('Резюме готово к скачиванию');
-    } catch (error) {
-      toast.error('Ошибка при загрузке резюме');
-    }
-  };
-
-  const handleResumePreview = (resumeId) => {
-    // Navigate to resume preview or open modal
-    navigate(`/resume/${resumeId}/preview`);
   };
 
   return (
@@ -234,7 +146,7 @@ const ProfilePage = () => {
               </div>
               
               <button
-                onClick={logout}
+                onClick={onLogout}
                 className="p-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
               >
                 <LogOut className="h-5 w-5" />
@@ -293,25 +205,14 @@ const ProfilePage = () => {
                 <div className="flex space-x-2">
                   <button
                     onClick={handleSave}
-                    disabled={saving}
-                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
                   >
-                    {saving ? (
-                      <>
-                        <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white"></div>
-                        <span>Сохранение...</span>
-                      </>
-                    ) : (
-                      <>
-                        <Save className="h-4 w-4" />
-                        <span>Сохранить</span>
-                      </>
-                    )}
+                    <Save className="h-4 w-4" />
+                    <span>Сохранить</span>
                   </button>
                   <button
                     onClick={handleCancel}
-                    disabled={saving}
-                    className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
+                    className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors"
                   >
                     <X className="h-4 w-4" />
                     <span>Отмена</span>
@@ -376,23 +277,6 @@ const ProfilePage = () => {
 
         {/* Profile Tab */}
         {activeTab === 'profile' && (
-          profileLoading ? (
-            <div className="flex justify-center py-12">
-              <LoadingSpinner />
-            </div>
-          ) : profileError ? (
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8">
-              <div className="text-center">
-                <p className="text-red-600 mb-4">Ошибка загрузки профиля</p>
-                <button 
-                  onClick={refetchProfile}
-                  className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                >
-                  Попробовать снова
-                </button>
-              </div>
-            </div>
-          ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
             <div className="space-y-6">
               {/* Basic Info */}
@@ -558,7 +442,6 @@ const ProfilePage = () => {
               </div>
             </div>
           </div>
-          )
         )}
 
         {/* Resumes Tab */}
@@ -575,46 +458,14 @@ const ProfilePage = () => {
                   <PlusCircle className="h-4 w-4" />
                   <span>Создать резюме</span>
                 </button>
-                <label className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors cursor-pointer">
+                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
                   <Upload className="h-4 w-4" />
-                  <span>{resumeUploading ? 'Загрузка...' : 'Загрузить файл'}</span>
-                  <input
-                    type="file"
-                    accept=".pdf,.doc,.docx"
-                    onChange={handleResumeUpload}
-                    disabled={resumeUploading}
-                    className="hidden"
-                  />
-                </label>
+                  <span>Загрузить файл</span>
+                </button>
               </div>
 
               <div className="space-y-4">
-                {resumesLoading ? (
-                  <div className="flex justify-center py-8">
-                    <LoadingSpinner />
-                  </div>
-                ) : resumesError ? (
-                  <div className="text-center py-8">
-                    <p className="text-red-600 mb-4">Ошибка загрузки резюме</p>
-                    <button 
-                      onClick={refetchResumes}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      Попробовать снова
-                    </button>
-                  </div>
-                ) : displayResumes.length === 0 ? (
-                  <div className="text-center py-8">
-                    <p className="text-gray-500 mb-4">У вас пока нет резюме</p>
-                    <button 
-                      onClick={() => setShowResumeBuilder(true)}
-                      className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      Создать резюме
-                    </button>
-                  </div>
-                ) : (
-                  displayResumes.map((resume) => (
+                {mockResumes.map((resume) => (
                   <div key={resume.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
                     <div className="flex items-center justify-between">
                       <div className="flex items-start space-x-4">
@@ -666,33 +517,18 @@ const ProfilePage = () => {
                       </div>
                       
                       <div className="flex items-center space-x-2">
-                        <button 
-                          onClick={() => handleResumePreview(resume.id)}
-                          className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
-                        >
+                        <button className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
                           <Eye className="h-4 w-4" />
                           <span className="text-sm">Просмотр</span>
                         </button>
-                        <button 
-                          onClick={() => handleResumeDownload(resume.id)}
-                          className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors"
-                        >
+                        <button className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
                           <Download className="h-4 w-4" />
                           <span className="text-sm">Скачать</span>
-                        </button>
-                        <button 
-                          onClick={() => handleResumeDelete(resume.id)}
-                          disabled={resumeDeleting}
-                          className="flex items-center space-x-1 px-3 py-2 text-red-600 hover:text-red-800 border border-red-300 rounded-lg hover:border-red-400 disabled:opacity-50 disabled:cursor-not-allowed transition-colors"
-                        >
-                          <X className="h-4 w-4" />
-                          <span className="text-sm">{resumeDeleting ? 'Удаление...' : 'Удалить'}</span>
                         </button>
                       </div>
                     </div>
                   </div>
-                  ))
-                )}
+                ))}
               </div>
             </div>
           </div>
@@ -710,7 +546,7 @@ const ProfilePage = () => {
                   </div>
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{displayStats.totalApplications}</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.totalApplications}</div>
                 <div className="text-sm text-gray-600">Всего откликов</div>
               </div>
               
@@ -721,7 +557,7 @@ const ProfilePage = () => {
                   </div>
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{displayStats.aiAdaptations}</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.aiAdaptations}</div>
                 <div className="text-sm text-gray-600">AI-адаптаций</div>
               </div>
               
@@ -732,7 +568,7 @@ const ProfilePage = () => {
                   </div>
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{displayStats.responses}</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.responses}</div>
                 <div className="text-sm text-gray-600">Ответов получено</div>
               </div>
               
@@ -743,7 +579,7 @@ const ProfilePage = () => {
                   </div>
                   <TrendingUp className="h-5 w-5 text-green-500" />
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{displayStats.successRate}%</div>
+                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.successRate}%</div>
                 <div className="text-sm text-gray-600">Успешность откликов</div>
               </div>
             </div>

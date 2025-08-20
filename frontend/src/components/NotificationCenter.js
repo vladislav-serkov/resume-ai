@@ -1,7 +1,4 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { apiService } from '../services/api';
-import { useApiData, useApiCall } from '../hooks/useApi';
-import LoadingSpinner from './LoadingSpinner';
 import { 
   Bell, 
   X, 
@@ -20,97 +17,99 @@ import {
   Star
 } from 'lucide-react';
 
-const NotificationCenter = () => {
+const NotificationCenter = ({ user }) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [notifications, setNotifications] = useState([]);
+  const [unreadCount, setUnreadCount] = useState(0);
   const dropdownRef = useRef(null);
 
-  // API hooks for notifications
-  const { 
-    data: notificationsData, 
-    loading: notificationsLoading, 
-    error: notificationsError,
-    refetch: refetchNotifications 
-  } = useApiData(() => apiService.notifications.getAll(), [], {
-    showErrorToast: false
-  });
+  // Мок данные уведомлений
+  const mockNotifications = [
+    {
+      id: 1,
+      type: 'job_match',
+      title: 'Новая подходящая вакансия',
+      message: 'Senior Frontend Developer в Яндекс - 92% соответствие',
+      timestamp: new Date(Date.now() - 5 * 60 * 1000), // 5 минут назад
+      read: false,
+      icon: Briefcase,
+      color: 'text-blue-600',
+      bgColor: 'bg-blue-50',
+      borderColor: 'border-blue-200',
+      action: 'Посмотреть вакансию'
+    },
+    {
+      id: 2,
+      type: 'application_sent',
+      title: 'Отклик отправлен',
+      message: 'Ваше адаптированное резюме отправлено в React компанию',
+      timestamp: new Date(Date.now() - 15 * 60 * 1000), // 15 минут назад
+      read: false,
+      icon: CheckCircle,
+      color: 'text-green-600',
+      bgColor: 'bg-green-50',
+      borderColor: 'border-green-200',
+      action: 'Отследить статус'
+    },
+    {
+      id: 3,
+      type: 'response_received',
+      title: 'Ответ от работодателя!',
+      message: 'Авито хочет назначить собеседование',
+      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000), // 2 часа назад
+      read: true,
+      icon: MessageSquare,
+      color: 'text-purple-600',
+      bgColor: 'bg-purple-50',
+      borderColor: 'border-purple-200',
+      action: 'Ответить',
+      priority: 'high'
+    },
+    {
+      id: 4,
+      type: 'interview_reminder',
+      title: 'Напоминание о собеседовании',
+      message: 'Собеседование с Сбер завтра в 14:00',
+      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000), // 4 часа назад
+      read: true,
+      icon: Calendar,
+      color: 'text-orange-600',
+      bgColor: 'bg-orange-50',
+      borderColor: 'border-orange-200',
+      action: 'Подготовиться'
+    },
+    {
+      id: 5,
+      type: 'stats_update',
+      title: 'Еженедельная статистика',
+      message: 'За неделю: 12 откликов, 3 ответа, 2 собеседования',
+      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000), // 1 день назад
+      read: true,
+      icon: TrendingUp,
+      color: 'text-indigo-600',
+      bgColor: 'bg-indigo-50',
+      borderColor: 'border-indigo-200',
+      action: 'Подробная статистика'
+    },
+    {
+      id: 6,
+      type: 'profile_incomplete',
+      title: 'Профиль не заполнен',
+      message: 'Добавьте навыки для лучшего поиска вакансий',
+      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000), // 2 дня назад
+      read: true,
+      icon: User,
+      color: 'text-gray-600',
+      bgColor: 'bg-gray-50',
+      borderColor: 'border-gray-200',
+      action: 'Заполнить профиль'
+    }
+  ];
 
-  const { 
-    data: unreadCountData, 
-    refetch: refetchUnreadCount 
-  } = useApiData(() => apiService.notifications.getUnreadCount(), [], {
-    showErrorToast: false
-  });
-
-  // Auto-refresh notification count every 30 seconds
   useEffect(() => {
-    const interval = setInterval(() => {
-      refetchUnreadCount();
-    }, 30000);
-
-    return () => clearInterval(interval);
-  }, [refetchUnreadCount]);
-
-  // Refresh notifications when window regains focus
-  useEffect(() => {
-    const handleFocus = () => {
-      refetchUnreadCount();
-      refetchNotifications();
-    };
-
-    window.addEventListener('focus', handleFocus);
-    return () => window.removeEventListener('focus', handleFocus);
-  }, [refetchUnreadCount, refetchNotifications]);
-
-  // API calls for actions
-  const { execute: markAsRead } = useApiCall(
-    (id) => apiService.notifications.markAsRead(id),
-    {
-      successMessage: 'Уведомление отмечено как прочитанное',
-      onSuccess: () => {
-        refetchNotifications();
-        refetchUnreadCount();
-      }
-    }
-  );
-
-  const { execute: markAllAsRead } = useApiCall(
-    () => apiService.notifications.markAllAsRead(),
-    {
-      successMessage: 'Все уведомления отмечены как прочитанные',
-      onSuccess: () => {
-        refetchNotifications();
-        refetchUnreadCount();
-      }
-    }
-  );
-
-  const { execute: deleteNotification } = useApiCall(
-    (id) => apiService.notifications.delete(id),
-    {
-      successMessage: 'Уведомление удалено',
-      onSuccess: () => {
-        refetchNotifications();
-        refetchUnreadCount();
-      }
-    }
-  );
-
-  // Get data from API
-  const notifications = notificationsData?.data || [];
-  const unreadCount = unreadCountData?.data?.count || 0;
-
-  // Map notification types to icons and colors
-  const getNotificationIcon = (type) => {
-    const iconMap = {
-      job_match: Briefcase,
-      application_sent: CheckCircle,
-      response_received: MessageSquare,
-      interview_reminder: Calendar,
-      stats_update: TrendingUp,
-      profile_incomplete: User
-    };
-    return iconMap[type] || Info;
-  };
+    setNotifications(mockNotifications);
+    setUnreadCount(mockNotifications.filter(n => !n.read).length);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -129,17 +128,33 @@ const NotificationCenter = () => {
     setIsOpen(!isOpen);
   };
 
-  // Handlers for notification actions
-  const handleMarkAsRead = async (notificationId) => {
-    await markAsRead(notificationId);
+  const markAsRead = (notificationId) => {
+    setNotifications(prev => 
+      prev.map(notification => 
+        notification.id === notificationId 
+          ? { ...notification, read: true }
+          : notification
+      )
+    );
+    setUnreadCount(prev => Math.max(0, prev - 1));
   };
 
-  const handleMarkAllAsRead = async () => {
-    await markAllAsRead();
+  const markAllAsRead = () => {
+    setNotifications(prev => 
+      prev.map(notification => ({ ...notification, read: true }))
+    );
+    setUnreadCount(0);
   };
 
-  const handleDeleteNotification = async (notificationId) => {
-    await deleteNotification(notificationId);
+  const deleteNotification = (notificationId) => {
+    setNotifications(prev => {
+      const updatedNotifications = prev.filter(n => n.id !== notificationId);
+      const unreadInDeleted = prev.find(n => n.id === notificationId && !n.read);
+      if (unreadInDeleted) {
+        setUnreadCount(current => Math.max(0, current - 1));
+      }
+      return updatedNotifications;
+    });
   };
 
   const getTimeAgo = (timestamp) => {
@@ -187,7 +202,7 @@ const NotificationCenter = () => {
               <div className="flex items-center space-x-2">
                 {unreadCount > 0 && (
                   <button
-                    onClick={handleMarkAllAsRead}
+                    onClick={markAllAsRead}
                     className="text-sm text-blue-600 hover:text-blue-800 font-medium transition-colors"
                   >
                     Прочитать все
@@ -210,21 +225,7 @@ const NotificationCenter = () => {
 
           {/* Notifications List */}
           <div className="max-h-80 overflow-y-auto">
-            {notificationsLoading ? (
-              <div className="px-6 py-8 text-center">
-                <LoadingSpinner />
-              </div>
-            ) : notificationsError ? (
-              <div className="px-6 py-8 text-center">
-                <p className="text-red-600 mb-4">Ошибка загрузки уведомлений</p>
-                <button 
-                  onClick={refetchNotifications}
-                  className="text-blue-600 hover:text-blue-800"
-                >
-                  Попробовать снова
-                </button>
-              </div>
-            ) : notifications.length === 0 ? (
+            {notifications.length === 0 ? (
               <div className="px-6 py-8 text-center">
                 <Bell className="h-12 w-12 text-gray-300 mx-auto mb-3" />
                 <p className="text-gray-500">Нет уведомлений</p>
@@ -232,19 +233,19 @@ const NotificationCenter = () => {
             ) : (
               <div className="divide-y divide-gray-100">
                 {notifications.map((notification) => {
-                  const IconComponent = getNotificationIcon(notification.type);
+                  const IconComponent = notification.icon;
                   return (
                     <div
                       key={notification.id}
                       className={`relative px-6 py-4 hover:bg-gray-50 transition-colors cursor-pointer group ${
                         !notification.read ? 'bg-blue-50/50' : ''
                       }`}
-                      onClick={() => !notification.read && handleMarkAsRead(notification.id)}
+                      onClick={() => !notification.read && markAsRead(notification.id)}
                     >
                       <div className="flex items-start space-x-3">
                         {/* Icon */}
-                        <div className={`flex-shrink-0 w-10 h-10 ${notification.bgColor || 'bg-gray-50'} ${notification.borderColor || 'border-gray-200'} border rounded-xl flex items-center justify-center`}>
-                          <IconComponent className={`h-5 w-5 ${notification.color || 'text-gray-600'}`} />
+                        <div className={`flex-shrink-0 w-10 h-10 ${notification.bgColor} ${notification.borderColor} border rounded-xl flex items-center justify-center`}>
+                          <IconComponent className={`h-5 w-5 ${notification.color}`} />
                         </div>
 
                         {/* Content */}
@@ -278,7 +279,7 @@ const NotificationCenter = () => {
                                 <button
                                   onClick={(e) => {
                                     e.stopPropagation();
-                                    handleMarkAsRead(notification.id);
+                                    markAsRead(notification.id);
                                   }}
                                   className="p-1 text-gray-400 hover:text-blue-600 rounded transition-colors"
                                   title="Отметить как прочитанное"
@@ -289,7 +290,7 @@ const NotificationCenter = () => {
                               <button
                                 onClick={(e) => {
                                   e.stopPropagation();
-                                  handleDeleteNotification(notification.id);
+                                  deleteNotification(notification.id);
                                 }}
                                 className="p-1 text-gray-400 hover:text-red-600 rounded transition-colors"
                                 title="Удалить уведомление"
