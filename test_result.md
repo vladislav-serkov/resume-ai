@@ -111,14 +111,11 @@ backend:
     file: "/app/backend/src/server.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "Successfully migrated from FastAPI to Node.js with Express + TypeScript. All API endpoints created with mock data. Server running on port 8001."
-      - working: true
-        agent: "testing"
-        comment: "✅ COMPREHENSIVE TESTING COMPLETED: Node.js backend with Express + TypeScript fully functional. Server running on port 8001 with proper CORS, security middleware (helmet, rate limiting), and error handling. Health check endpoint (/health) and API root (/api) both responding correctly. All 21 API endpoints tested successfully with proper JSON responses containing success, data, and message fields as required."
 
   - task: "Authentication API Endpoints"
     implemented: true
