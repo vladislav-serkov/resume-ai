@@ -181,7 +181,7 @@ const RegisterPage = ({ onRegister }) => {
                       value={formData.password}
                       onChange={handleInputChange}
                       required
-                      minLength="6"
+                      minLength={6}
                       className="block w-full pl-10 pr-12 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors"
                       placeholder="Минимум 6 символов"
                     />
