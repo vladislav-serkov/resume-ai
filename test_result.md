@@ -186,14 +186,11 @@ backend:
     file: "/app/backend/src/controllers/applicationController.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "Created job application endpoints: GET /api/applications, POST /api/applications, GET /api/applications/:id"
-      - working: true
-        agent: "testing"
-        comment: "✅ COMPREHENSIVE TESTING COMPLETED: Application management endpoints fully functional. GET /api/applications (200) returns user's job applications with status tracking (pending, interview, rejected, etc.). POST /api/applications (201) successfully creates new applications with unique IDs and proper date formatting. GET /api/applications/:id (200) retrieves specific application details. All endpoints handle Russian company names and position titles correctly with proper status management."
 
   - task: "Notifications API"
     implemented: true
