@@ -172,7 +172,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     setUnreadCount(0);
   };
 
-  const deleteNotification = (notificationId) => {
+  const deleteNotification = (notificationId: number): void => {
     setNotifications(prev => {
       const updatedNotifications = prev.filter(n => n.id !== notificationId);
       const unreadInDeleted = prev.find(n => n.id === notificationId && !n.read);
