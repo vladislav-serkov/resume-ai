@@ -147,7 +147,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
     }
   ];
 
-  const mockStats = {
+  const mockStats: Stats = {
     totalApplications: 24,
     aiAdaptations: 45,
     responses: 8,
