@@ -171,14 +171,11 @@ backend:
     file: "/app/backend/src/controllers/vacancyController.ts"
     stuck_count: 0
     priority: "high"
-    needs_retesting: false
+    needs_retesting: true
     status_history:
       - working: true
         agent: "main"
         comment: "Created GET /api/vacancies with filters and GET /api/vacancies/:id endpoints with mock job data"
-      - working: true
-        agent: "testing"
-        comment: "✅ COMPREHENSIVE TESTING COMPLETED: Vacancy search endpoints fully functional. GET /api/vacancies (200) returns comprehensive job listings with Russian companies (Яндекс, Сбер, etc.) and proper salary formatting in rubles. Query parameter filtering works correctly (?position=Frontend&location=Москва&salary_min=100000). GET /api/vacancies/:id (200) returns detailed vacancy information with full job descriptions, requirements, and company details. All responses properly formatted with Russian localization."
 
   - task: "Application Management API"
     implemented: true
