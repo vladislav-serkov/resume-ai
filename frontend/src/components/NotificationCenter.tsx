@@ -165,7 +165,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     setUnreadCount(prev => Math.max(0, prev - 1));
   };
 
-  const markAllAsRead = () => {
+  const markAllAsRead = (): void => {
     setNotifications(prev => 
       prev.map(notification => ({ ...notification, read: true }))
     );
