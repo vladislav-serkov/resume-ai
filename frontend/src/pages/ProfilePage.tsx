@@ -155,7 +155,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
     successRate: 33
   };
 
-  const handleSave = () => {
+  const handleSave = (): void => {
     setIsEditing(false);
     // Simulate API call
     console.log('Saving profile data:', profileData);
