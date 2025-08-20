@@ -2,7 +2,20 @@ import React, { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Sparkles, Mail, Lock, Eye, EyeOff, ArrowLeft } from 'lucide-react';
 
-const LoginPage = ({ onLogin }) => {
+interface User {
+  id: number;
+  name: string;
+  email: string;
+  avatar: string;
+  position: string;
+  resumeUploaded: boolean;
+}
+
+interface LoginPageProps {
+  onLogin: (userData: User) => void;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ onLogin }) => {
   const navigate = useNavigate();
   const [showPassword, setShowPassword] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
