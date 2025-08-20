@@ -8,9 +8,16 @@ import Dashboard from "./pages/Dashboard";
 import VacancyPage from "./pages/VacancyPage";
 import ProfilePage from "./pages/ProfilePage";
 
-function App() {
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [user, setUser] = useState(null);
+interface User {
+  name: string;
+  position: string;
+  avatar: string;
+  email: string;
+}
+
+function App(): JSX.Element {
+  const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+  const [user, setUser] = useState<User | null>(null);
 
   const handleLogin = (userData) => {
     setIsAuthenticated(true);
