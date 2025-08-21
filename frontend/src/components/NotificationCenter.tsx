@@ -351,8 +351,12 @@ const EmptyNotifications: React.FC = () => (
 /**
  * Individual notification item
  */
-interface NotificationItemProps extends NotificationsListProps {
+interface NotificationItemProps {
   notification: Notification;
+  onMarkAsRead: (id: number) => void;
+  onDelete: (id: number) => void;
+  getTimeAgo: (timestamp: Date) => string;
+  getPriorityIcon: (notification: Notification) => React.JSX.Element | null;
 }
 
 const NotificationItem: React.FC<NotificationItemProps> = ({
