@@ -41,7 +41,6 @@ export const SPINNER_TEXT_SIZE_CLASSES = {
 
 // Navigation tabs
 export const DASHBOARD_TABS = {
-  SEARCH: 'search',
   APPLICATIONS: 'applications'
 } as const;
 
