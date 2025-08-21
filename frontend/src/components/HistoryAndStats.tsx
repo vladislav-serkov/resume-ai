@@ -47,7 +47,7 @@ const HistoryAndStats = () => {
     }
   };
 
-  const getStatusText = (status) => {
+  const getStatusText = (status: string) => {
     switch(status) {
       case 'responded': return 'Отклик получен';
       case 'pending': return 'Ожидание';
