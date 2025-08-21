@@ -1,5 +1,5 @@
 import React from 'react';
-import { Sparkles, Briefcase, LogOut } from 'lucide-react';
+import { Sparkles, Briefcase, TrendingUp, LogOut } from 'lucide-react';
 import NotificationCenter from '../NotificationCenter';
 import { User as UserType, VoidFunction } from '../../types';
 import { DASHBOARD_TABS } from '../../constants';
@@ -12,7 +12,7 @@ interface DashboardHeaderProps {
 }
 
 /**
- * Dashboard header with simplified navigation (only applications)
+ * Dashboard header with navigation for applications and statistics
  */
 const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   user,
@@ -20,6 +20,21 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
   onTabChange,
   onLogout
 }) => {
+  const navigationItems = [
+    {
+      id: DASHBOARD_TABS.APPLICATIONS,
+      label: 'Мои отклики',
+      icon: Briefcase,
+      onClick: () => onTabChange(DASHBOARD_TABS.APPLICATIONS)
+    },
+    {
+      id: DASHBOARD_TABS.STATISTICS,
+      label: 'Статистика',
+      icon: TrendingUp,
+      onClick: () => onTabChange(DASHBOARD_TABS.STATISTICS)
+    }
+  ];
+
   return (
     <header className="bg-white shadow-sm border-b border-gray-200">
       <div className="max-w-7xl mx-auto px-6 py-4">
@@ -35,12 +50,27 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
               </h1>
             </div>
             
-            {/* Navigation - simplified to just show we're on applications */}
+            {/* Navigation */}
             <nav className="hidden md:flex space-x-8">
-              <div className="flex items-center space-x-2 px-3 py-2 rounded-lg bg-blue-100 text-blue-700">
-                <Briefcase className="h-4 w-4" />
-                <span>Мои отклики и статистика</span>
-              </div>
+              {navigationItems.map((item) => {
+                const Icon = item.icon;
+                const isActive = activeTab === item.id;
+                
+                return (
+                  <button
+                    key={item.id}
+                    onClick={item.onClick}
+                    className={`flex items-center space-x-2 px-3 py-2 rounded-lg transition-colors ${
+                      isActive 
+                        ? 'bg-blue-100 text-blue-700' 
+                        : 'text-gray-600 hover:text-gray-900'
+                    }`}
+                  >
+                    <Icon className="h-4 w-4" />
+                    <span>{item.label}</span>
+                  </button>
+                );
+              })}
             </nav>
           </div>
 
