@@ -1,4 +1,3 @@
-import React from 'react';
 import { History, BarChart3, TrendingUp, Users, FileText, Search, Calendar, Award } from 'lucide-react';
 
 const HistoryAndStats = () => {
