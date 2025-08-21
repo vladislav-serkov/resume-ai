@@ -1,7 +1,11 @@
-import React from 'react';
 import { Download, Eye, Share2, Printer } from 'lucide-react';
 
-const PDFPreview = ({ resumeData, isAdapted = false }) => {
+interface PDFPreviewProps {
+  resumeData?: any;
+  isAdapted?: boolean;
+}
+
+const PDFPreview: React.FC<PDFPreviewProps> = ({ resumeData, isAdapted = false }) => {
   if (!resumeData) return null;
 
   const handleDownload = () => {
