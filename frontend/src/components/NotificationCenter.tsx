@@ -135,7 +135,7 @@ const mockNotifications: Notification[] = [
 /**
  * Notification center component with dropdown and management features
  */
-const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
+const NotificationCenter: React.FC<NotificationCenterProps> = ({ user: _user }) => {
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState<number>(0);
