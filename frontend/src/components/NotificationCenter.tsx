@@ -49,6 +49,89 @@ enum NotificationPriority {
   HIGH = 'high'
 }
 
+// Mock notification data
+const mockNotifications: Notification[] = [
+  {
+    id: 1,
+    type: NotificationType.JOB_MATCH,
+    title: 'Новая подходящая вакансия',
+    message: 'Senior Frontend Developer в Яндекс - 92% соответствие',
+    timestamp: new Date(Date.now() - 5 * 60 * 1000),
+    read: false,
+    icon: Briefcase,
+    color: 'text-blue-600',
+    bgColor: 'bg-blue-50',
+    borderColor: 'border-blue-200',
+    action: 'Посмотреть вакансию'
+  },
+  {
+    id: 2,
+    type: NotificationType.APPLICATION_SENT,
+    title: 'Отклик отправлен',
+    message: 'Ваше адаптированное резюме отправлено в React компанию',
+    timestamp: new Date(Date.now() - 15 * 60 * 1000),
+    read: false,
+    icon: CheckCircle,
+    color: 'text-green-600',
+    bgColor: 'bg-green-50',
+    borderColor: 'border-green-200',
+    action: 'Отследить статус'
+  },
+  {
+    id: 3,
+    type: NotificationType.RESPONSE_RECEIVED,
+    title: 'Ответ от работодателя!',
+    message: 'Авито хочет назначить собеседование',
+    timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
+    read: true,
+    icon: MessageSquare,
+    color: 'text-purple-600',
+    bgColor: 'bg-purple-50',
+    borderColor: 'border-purple-200',
+    action: 'Ответить',
+    priority: NotificationPriority.HIGH
+  },
+  {
+    id: 4,
+    type: NotificationType.INTERVIEW_REMINDER,
+    title: 'Напоминание о собеседовании',
+    message: 'Собеседование с Сбер завтра в 14:00',
+    timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
+    read: true,
+    icon: Calendar,
+    color: 'text-orange-600',
+    bgColor: 'bg-orange-50',
+    borderColor: 'border-orange-200',
+    action: 'Подготовиться'
+  },
+  {
+    id: 5,
+    type: NotificationType.STATS_UPDATE,
+    title: 'Еженедельная статистика',
+    message: 'За неделю: 12 откликов, 3 ответа, 2 собеседования',
+    timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
+    read: true,
+    icon: TrendingUp,
+    color: 'text-indigo-600',
+    bgColor: 'bg-indigo-50',
+    borderColor: 'border-indigo-200',
+    action: 'Подробная статистика'
+  },
+  {
+    id: 6,
+    type: NotificationType.PROFILE_INCOMPLETE,
+    title: 'Профиль не заполнен',
+    message: 'Добавьте навыки для лучшего поиска вакансий',
+    timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
+    read: true,
+    icon: User,
+    color: 'text-gray-600',
+    bgColor: 'bg-gray-50',
+    borderColor: 'border-gray-200',
+    action: 'Заполнить профиль'
+  }
+];
+
 /**
  * Notification center component with dropdown and management features
  */
@@ -58,93 +141,10 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
   const [unreadCount, setUnreadCount] = useState<number>(0);
   const dropdownRef = useRef<HTMLDivElement>(null);
 
-  // Mock notification data
-  const mockNotifications: Notification[] = [
-    {
-      id: 1,
-      type: NotificationType.JOB_MATCH,
-      title: 'Новая подходящая вакансия',
-      message: 'Senior Frontend Developer в Яндекс - 92% соответствие',
-      timestamp: new Date(Date.now() - 5 * 60 * 1000),
-      read: false,
-      icon: Briefcase,
-      color: 'text-blue-600',
-      bgColor: 'bg-blue-50',
-      borderColor: 'border-blue-200',
-      action: 'Посмотреть вакансию'
-    },
-    {
-      id: 2,
-      type: NotificationType.APPLICATION_SENT,
-      title: 'Отклик отправлен',
-      message: 'Ваше адаптированное резюме отправлено в React компанию',
-      timestamp: new Date(Date.now() - 15 * 60 * 1000),
-      read: false,
-      icon: CheckCircle,
-      color: 'text-green-600',
-      bgColor: 'bg-green-50',
-      borderColor: 'border-green-200',
-      action: 'Отследить статус'
-    },
-    {
-      id: 3,
-      type: NotificationType.RESPONSE_RECEIVED,
-      title: 'Ответ от работодателя!',
-      message: 'Авито хочет назначить собеседование',
-      timestamp: new Date(Date.now() - 2 * 60 * 60 * 1000),
-      read: true,
-      icon: MessageSquare,
-      color: 'text-purple-600',
-      bgColor: 'bg-purple-50',
-      borderColor: 'border-purple-200',
-      action: 'Ответить',
-      priority: NotificationPriority.HIGH
-    },
-    {
-      id: 4,
-      type: NotificationType.INTERVIEW_REMINDER,
-      title: 'Напоминание о собеседовании',
-      message: 'Собеседование с Сбер завтра в 14:00',
-      timestamp: new Date(Date.now() - 4 * 60 * 60 * 1000),
-      read: true,
-      icon: Calendar,
-      color: 'text-orange-600',
-      bgColor: 'bg-orange-50',
-      borderColor: 'border-orange-200',
-      action: 'Подготовиться'
-    },
-    {
-      id: 5,
-      type: NotificationType.STATS_UPDATE,
-      title: 'Еженедельная статистика',
-      message: 'За неделю: 12 откликов, 3 ответа, 2 собеседования',
-      timestamp: new Date(Date.now() - 24 * 60 * 60 * 1000),
-      read: true,
-      icon: TrendingUp,
-      color: 'text-indigo-600',
-      bgColor: 'bg-indigo-50',
-      borderColor: 'border-indigo-200',
-      action: 'Подробная статистика'
-    },
-    {
-      id: 6,
-      type: NotificationType.PROFILE_INCOMPLETE,
-      title: 'Профиль не заполнен',
-      message: 'Добавьте навыки для лучшего поиска вакансий',
-      timestamp: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000),
-      read: true,
-      icon: User,
-      color: 'text-gray-600',
-      bgColor: 'bg-gray-50',
-      borderColor: 'border-gray-200',
-      action: 'Заполнить профиль'
-    }
-  ];
-
   useEffect(() => {
     setNotifications(mockNotifications);
     setUnreadCount(mockNotifications.filter(n => !n.read).length);
-  }, [mockNotifications]);
+  }, []);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
