@@ -8,14 +8,15 @@ import { mockDashboardStats, mockApplications } from '../data/mockStats';
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import AIStatusCard from '../components/dashboard/AIStatusCard';
 import ApplicationsList from '../components/dashboard/ApplicationsList';
+import StatisticsPage from '../components/dashboard/StatisticsPage';
 
 /**
- * Main dashboard page component - simplified with only applications and statistics
+ * Main dashboard page component with applications and statistics tabs
  */
 const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
   
-  // Since we only have applications tab now, set it as default
+  // Default to applications tab
   const [activeTab, setActiveTab] = useState<string>(DASHBOARD_TABS.APPLICATIONS);
 
   /**
@@ -42,11 +43,23 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
-        {/* Statistics section - always visible */}
+        {/* AI Status Card - always visible */}
         <AIStatusCard stats={mockDashboardStats} />
 
-        {/* Applications section - always visible */}
-        <ApplicationsList applications={mockApplications} />
+        {/* Tab Content */}
+        {activeTab === DASHBOARD_TABS.APPLICATIONS && (
+          <ApplicationsList applications={mockApplications} />
+        )}
+
+        {activeTab === DASHBOARD_TABS.STATISTICS && (
+          <StatisticsPage stats={{
+            totalApplications: mockDashboardStats.totalApplications,
+            aiAdaptations: mockDashboardStats.aiAdaptations,
+            responses: mockDashboardStats.responses,
+            interviews: mockDashboardStats.interviews,
+            successRate: Math.round((mockDashboardStats.responses / mockDashboardStats.totalApplications) * 100)
+          }} />
+        )}
       </main>
     </div>
   );
