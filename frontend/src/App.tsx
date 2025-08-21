@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from "react";
+import { useState, useCallback } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
@@ -12,7 +12,7 @@ import { User, AuthState, LoginHandler, LogoutHandler } from "./types";
 /**
  * Main application component with routing and authentication state management
  */
-function App(): JSX.Element {
+function App() {
   const [authState, setAuthState] = useState<AuthState>({
     isAuthenticated: false,
     user: null

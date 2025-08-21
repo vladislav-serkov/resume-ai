@@ -1,4 +1,4 @@
-import React, { useState, useCallback } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DashboardProps, SearchFilters } from '../types';
 import { DASHBOARD_TABS } from '../constants';
@@ -8,7 +8,7 @@ import { mockDashboardStats, mockApplications } from '../data/mockStats';
 // Dashboard components
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import AIStatusCard from '../components/dashboard/AIStatusCard';
-import SearchFilters as SearchFiltersComponent from '../components/dashboard/SearchFilters';
+import SearchFiltersComponent from '../components/dashboard/SearchFilters';
 import VacancyCard from '../components/dashboard/VacancyCard';
 import ApplicationsList from '../components/dashboard/ApplicationsList';
 
