@@ -308,7 +308,7 @@ interface NotificationsListProps {
   onMarkAsRead: (id: number) => void;
   onDelete: (id: number) => void;
   getTimeAgo: (timestamp: Date) => string;
-  getPriorityIcon: (notification: Notification) => JSX.Element | null;
+  getPriorityIcon: (notification: Notification) => React.JSX.Element | null;
 }
 
 const NotificationsList: React.FC<NotificationsListProps> = ({
