@@ -1,30 +1,36 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { 
-  Upload, 
   Download, 
   Eye, 
-  Edit, 
-  Save, 
   X, 
   Plus, 
   Trash2,
   FileText,
-  Sparkles,
-  Target,
-  Calendar,
-  MapPin,
-  Mail,
-  Phone,
-  Globe,
-  Award,
+  Code,
+  User,
   Briefcase,
   GraduationCap,
-  Star,
-  Code,
-  User
+  Star
 } from 'lucide-react';
 
-const ResumeBuilder = ({ user, isOpen, onClose }) => {
+interface User {
+  name?: string;
+  position?: string;
+  email?: string;
+}
+
+interface ResumeBuilderProps {
+  user: User;
+  isOpen: boolean;
+  onClose: () => void;
+}
+
+interface ValidationErrors {
+  email?: string;
+  phone?: string;
+}
+
+const ResumeBuilder = ({ user, isOpen, onClose }: ResumeBuilderProps) => {
   const [activeTab, setActiveTab] = useState('personal');
   const [resumeData, setResumeData] = useState({
     personal: {
@@ -86,12 +92,11 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     ]
   });
 
-  const [errors, setErrors] = useState({});
+  const [errors, setErrors] = useState<ValidationErrors>({});
 
   const skillLevels = ['Начинающий', 'Базовый', 'Продвинутый', 'Эксперт'];
-  const languageLevels = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2', 'Родной'];
 
-  const validateField = (field, value) => {
+  const validateField = (field: string, value: string) => {
     const newErrors = { ...errors };
     
     if (field === 'email' && value && !/\S+@\S+\.\S+/.test(value)) {
@@ -109,7 +114,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     setErrors(newErrors);
   };
 
-  const updatePersonalInfo = (field, value) => {
+  const updatePersonalInfo = (field: string, value: string) => {
     setResumeData(prev => ({
       ...prev,
       personal: {
@@ -137,7 +142,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     }));
   };
 
-  const updateExperience = (id, field, value) => {
+  const updateExperience = (id: number, field: string, value: string | boolean) => {
     setResumeData(prev => ({
       ...prev,
       experience: prev.experience.map(exp =>
@@ -146,7 +151,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     }));
   };
 
-  const removeExperience = (id) => {
+  const removeExperience = (id: number) => {
     setResumeData(prev => ({
       ...prev,
       experience: prev.experience.filter(exp => exp.id !== id)
@@ -165,7 +170,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     }));
   };
 
-  const updateSkill = (id, field, value) => {
+  const updateSkill = (id: number, field: string, value: string | number) => {
     setResumeData(prev => ({
       ...prev,
       skills: prev.skills.map(skill =>
@@ -174,7 +179,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     }));
   };
 
-  const removeSkill = (id) => {
+  const removeSkill = (id: number) => {
     setResumeData(prev => ({
       ...prev,
       skills: prev.skills.filter(skill => skill.id !== id)
@@ -197,7 +202,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     }));
   };
 
-  const updateEducation = (id, field, value) => {
+  const updateEducation = (id: number, field: string, value: string | boolean) => {
     setResumeData(prev => ({
       ...prev,
       education: prev.education.map(edu =>
@@ -206,7 +211,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
     }));
   };
 
-  const removeEducation = (id) => {
+  const removeEducation = (id: number) => {
     setResumeData(prev => ({
       ...prev,
       education: prev.education.filter(edu => edu.id !== id)
@@ -366,7 +371,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
                       <textarea
                         value={resumeData.personal.summary}
                         onChange={(e) => updatePersonalInfo('summary', e.target.value)}
-                        rows="4"
+                        rows={4}
                         className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                         placeholder="Опишите ваш опыт и цели..."
                       />
@@ -471,7 +476,7 @@ const ResumeBuilder = ({ user, isOpen, onClose }) => {
                           <textarea
                             value={exp.description}
                             onChange={(e) => updateExperience(exp.id, 'description', e.target.value)}
-                            rows="3"
+                            rows={3}
                             className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                             placeholder="Опишите ваши обязанности и достижения..."
                           />

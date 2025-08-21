@@ -20,17 +20,12 @@ import {
   Sparkles,
   Bot,
   TrendingUp,
-  Bell,
   LogOut,
   Settings,
   Eye,
   Zap,
   Target,
-  PlusCircle,
-  Calendar,
-  Award,
-  Star,
-  Clock
+  PlusCircle
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -421,7 +416,7 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
                   <textarea
                     value={profileData.about}
                     onChange={(e) => handleInputChange('about', e.target.value)}
-                    rows="4"
+                    rows={4}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                 ) : (
@@ -577,13 +572,13 @@ const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
                           
                           {resume.isOriginal ? (
                             <div className="text-sm text-gray-600">
-                              <p>Загружено: {new Date(resume.uploadDate).toLocaleDateString('ru-RU')}</p>
-                              <p>Адаптаций: {resume.adaptations} • Последнее использование: {new Date(resume.lastUsed).toLocaleDateString('ru-RU')}</p>
+                              <p>Загружено: {resume.uploadDate ? new Date(resume.uploadDate).toLocaleDateString('ru-RU') : 'Неизвестно'}</p>
+                              <p>Адаптаций: {resume.adaptations} • Последнее использование: {resume.lastUsed ? new Date(resume.lastUsed).toLocaleDateString('ru-RU') : 'Неизвестно'}</p>
                             </div>
                           ) : (
                             <div className="text-sm text-gray-600">
                               <p>Для вакансии: {resume.baseVacancy}</p>
-                              <p>Создано: {new Date(resume.adaptationDate).toLocaleDateString('ru-RU')}</p>
+                              <p>Создано: {resume.adaptationDate ? new Date(resume.adaptationDate).toLocaleDateString('ru-RU') : 'Неизвестно'}</p>
                             </div>
                           )}
                         </div>

@@ -7,9 +7,7 @@ import {
   Zap,
   Bot,
   CheckCircle,
-  Target,
-  Calendar,
-  Award
+  Target
 } from 'lucide-react';
 import {
   Chart as ChartJS,
@@ -42,7 +40,7 @@ interface StatsMiniProps {
   };
 }
 
-const StatsMini: React.FC<StatsMiniProps> = ({ user }) => {
+const StatsMini: React.FC<StatsMiniProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

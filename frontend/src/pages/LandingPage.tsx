@@ -1,4 +1,3 @@
-import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { 
   Bot, 
@@ -7,7 +6,6 @@ import {
   TrendingUp, 
   CheckCircle, 
   Users, 
-  Briefcase, 
   Star,
   ArrowRight,
   Play,

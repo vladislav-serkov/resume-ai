@@ -8,9 +8,7 @@ import {
   Download,
   Eye,
   PlusCircle,
-  Target,
-  Calendar,
-  Star
+  Target
 } from 'lucide-react';
 
 interface ResumeMiniProps {
@@ -33,7 +31,7 @@ interface Resume {
   matchScore?: number;
 }
 
-const ResumeMini: React.FC<ResumeMiniProps> = ({ user }) => {
+const ResumeMini: React.FC<ResumeMiniProps> = () => {
   const [isOpen, setIsOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
 

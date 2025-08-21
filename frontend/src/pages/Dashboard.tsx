@@ -1,5 +1,4 @@
 import { useState, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { DashboardProps } from '../types';
 import { DASHBOARD_TABS } from '../constants';
 import { mockDashboardStats, mockApplications } from '../data/mockStats';
@@ -14,17 +13,9 @@ import StatisticsPage from '../components/dashboard/StatisticsPage';
  * Main dashboard page component with applications and statistics tabs
  */
 const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
-  const navigate = useNavigate();
-  
   // Default to applications tab
   const [activeTab, setActiveTab] = useState<string>(DASHBOARD_TABS.APPLICATIONS);
 
-  /**
-   * Handle vacancy application
-   */
-  const handleApply = useCallback((vacancyId: number) => {
-    navigate(`/vacancy/${vacancyId}`);
-  }, [navigate]);
 
   /**
    * Handle tab changes

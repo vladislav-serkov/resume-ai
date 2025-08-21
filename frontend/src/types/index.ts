@@ -122,7 +122,7 @@ export interface ToastState {
 export interface ToastAction {
   type: ToastActionType;
   toast?: Toast;
-  toastId?: string;
+  toastId?: string | undefined;
 }
 
 export enum ToastActionType {

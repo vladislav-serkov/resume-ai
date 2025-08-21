@@ -1,7 +1,21 @@
-import React from 'react';
 import { Download, Sparkles, User, Mail, Phone, MapPin, Calendar, Briefcase, GraduationCap } from 'lucide-react';
 
-const ResumeViewer = ({ resumeData, isAdapted = false }) => {
+interface ResumeData {
+  name: string;
+  position: string;
+  skills: string[];
+  highlightedSkills?: string[];
+  experience: any[];
+  adaptedExperience?: any[];
+  education: string;
+}
+
+interface ResumeViewerProps {
+  resumeData: ResumeData;
+  isAdapted?: boolean;
+}
+
+const ResumeViewer = ({ resumeData, isAdapted = false }: ResumeViewerProps) => {
   if (!resumeData) return null;
 
   return (
@@ -55,7 +69,7 @@ const ResumeViewer = ({ resumeData, isAdapted = false }) => {
         <div>
           <h2 className="text-lg font-semibold text-gray-900 mb-3">Навыки</h2>
           <div className="flex flex-wrap gap-2">
-            {resumeData.skills.map((skill, idx) => (
+            {resumeData.skills.map((skill: string, idx: number) => (
               <span 
                 key={idx} 
                 className={`px-3 py-1 rounded-full text-sm font-medium ${
@@ -80,7 +94,7 @@ const ResumeViewer = ({ resumeData, isAdapted = false }) => {
             Опыт работы
           </h2>
           <div className="space-y-4">
-            {(isAdapted ? resumeData.adaptedExperience : resumeData.experience).map((exp, idx) => (
+            {(isAdapted ? resumeData.adaptedExperience || [] : resumeData.experience || []).map((exp: any, idx: number) => (
               <div key={idx} className="border-l-4 border-blue-200 pl-4 pb-4">
                 <div className="flex items-start justify-between mb-2">
                   <div>
