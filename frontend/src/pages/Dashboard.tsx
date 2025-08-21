@@ -1,32 +1,22 @@
 import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { DashboardProps, SearchFilters } from '../types';
+import { DashboardProps } from '../types';
 import { DASHBOARD_TABS } from '../constants';
-import { mockVacancies } from '../data/mockVacancies';
 import { mockDashboardStats, mockApplications } from '../data/mockStats';
 
 // Dashboard components
 import DashboardHeader from '../components/dashboard/DashboardHeader';
 import AIStatusCard from '../components/dashboard/AIStatusCard';
-import SearchFiltersComponent from '../components/dashboard/SearchFilters';
-import VacancyCard from '../components/dashboard/VacancyCard';
 import ApplicationsList from '../components/dashboard/ApplicationsList';
 
 /**
- * Main dashboard page component
+ * Main dashboard page component - simplified with only applications and statistics
  */
 const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
   const navigate = useNavigate();
   
-  // State management
-  const [searchQuery, setSearchQuery] = useState<string>('');
-  const [selectedFilters, setSelectedFilters] = useState<SearchFilters>({
-    location: '',
-    salary: '',
-    experience: '',
-    remote: false
-  });
-  const [activeTab, setActiveTab] = useState<string>(DASHBOARD_TABS.SEARCH);
+  // Since we only have applications tab now, set it as default
+  const [activeTab, setActiveTab] = useState<string>(DASHBOARD_TABS.APPLICATIONS);
 
   /**
    * Handle vacancy application
@@ -52,21 +42,11 @@ const Dashboard: React.FC<DashboardProps> = ({ user, onLogout }) => {
       />
 
       <main className="max-w-7xl mx-auto px-6 py-8">
+        {/* Statistics section - always visible */}
         <AIStatusCard stats={mockDashboardStats} />
 
-        {activeTab === DASHBOARD_TABS.SEARCH && (
-          <SearchTabContent
-            searchQuery={searchQuery}
-            filters={selectedFilters}
-            onSearchChange={setSearchQuery}
-            onFiltersChange={setSelectedFilters}
-            onApply={handleApply}
-          />
-        )}
-
-        {activeTab === DASHBOARD_TABS.APPLICATIONS && (
-          <ApplicationsList applications={mockApplications} />
-        )}
+        {/* Applications section - always visible */}
+        <ApplicationsList applications={mockApplications} />
       </main>
     </div>
   );
