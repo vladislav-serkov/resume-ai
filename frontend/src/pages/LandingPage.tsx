@@ -128,7 +128,7 @@ const LandingPage = () => {
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
                 <button 
-                  onClick={() => navigate('/register')}
+                  onClick={() => navigate('/dashboard')}
                   className="flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold text-lg"
                 >
                   <span>Начать бесплатно</span>
