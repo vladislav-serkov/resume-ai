@@ -41,7 +41,8 @@ export const SPINNER_TEXT_SIZE_CLASSES = {
 
 // Navigation tabs
 export const DASHBOARD_TABS = {
-  APPLICATIONS: 'applications'
+  APPLICATIONS: 'applications',
+  STATISTICS: 'statistics'
 } as const;
 
 // Form validation messages
