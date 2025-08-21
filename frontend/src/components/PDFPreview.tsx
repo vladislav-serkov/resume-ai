@@ -77,7 +77,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ resumeData, isAdapted = false }
             <div className="mb-4">
               <h2 className="text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Навыки</h2>
               <div className="grid grid-cols-3 gap-1 text-xs">
-                {resumeData.skills.map((skill, idx) => (
+                {resumeData.skills.map((skill: any, idx: number) => (
                   <span 
                     key={idx} 
                     className={`px-2 py-1 rounded text-center ${
