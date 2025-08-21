@@ -90,13 +90,13 @@ const LandingPage = () => {
             </div>
             <div className="flex items-center space-x-4">
               <button 
-                onClick={() => navigate('/login')}
+                onClick={() => navigate('/dashboard')}
                 className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
               >
                 Войти
               </button>
               <button 
-                onClick={() => navigate('/register')}
+                onClick={() => navigate('/dashboard')}
                 className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:opacity-90 transition-opacity font-medium"
               >
                 Начать поиск
