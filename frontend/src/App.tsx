@@ -1,44 +1,29 @@
-import { useState, useCallback } from "react";
+import { useCallback } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
-import LoginPage from "./pages/LoginPage";
-import RegisterPage from "./pages/RegisterPage";
 import Dashboard from "./pages/Dashboard";
 import VacancyPage from "./pages/VacancyPage";
-import ProfilePage from "./pages/ProfilePage";
-import { User, AuthState, LoginHandler, LogoutHandler } from "./types";
+import { User } from "./types";
+
+// Mock user data - since we removed authentication
+const mockUser: User = {
+  name: "Анна Иванова",
+  position: "Frontend Developer", 
+  avatar: "АИ",
+  email: "anna@example.com"
+};
 
 /**
- * Main application component with routing and authentication state management
+ * Main application component with simplified routing (no authentication)
  */
 function App() {
-  const [authState, setAuthState] = useState<AuthState>({
-    isAuthenticated: false,
-    user: null
-  });
-
   /**
-   * Handle user login and set authentication state
+   * Handle user logout (redirects to landing page)
    */
-  const handleLogin: LoginHandler = useCallback((userData: User) => {
-    setAuthState({
-      isAuthenticated: true,
-      user: userData
-    });
+  const handleLogout = useCallback(() => {
+    window.location.href = '/';
   }, []);
-
-  /**
-   * Handle user logout and clear authentication state
-   */
-  const handleLogout: LogoutHandler = useCallback(() => {
-    setAuthState({
-      isAuthenticated: false,
-      user: null
-    });
-  }, []);
-
-  const { isAuthenticated, user } = authState;
 
   return (
     <div className="App">
@@ -47,64 +32,20 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           
-          <Route 
-            path="/login" 
-            element={
-              isAuthenticated ? (
-                <Navigate to="/dashboard" replace />
-              ) : (
-                <LoginPage onLogin={handleLogin} />
-              )
-            } 
-          />
-          
-          <Route 
-            path="/register" 
-            element={
-              isAuthenticated ? (
-                <Navigate to="/dashboard" replace />
-              ) : (
-                <RegisterPage onRegister={handleLogin} />
-              )
-            } 
-          />
-          
-          {/* Protected Routes */}
+          {/* Dashboard - now accessible without authentication */}
           <Route 
             path="/dashboard" 
-            element={
-              isAuthenticated && user ? (
-                <Dashboard user={user} onLogout={handleLogout} />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            } 
+            element={<Dashboard user={mockUser} onLogout={handleLogout} />} 
           />
           
+          {/* Vacancy page - simplified access */}
           <Route 
             path="/vacancy/:id" 
-            element={
-              isAuthenticated && user ? (
-                <VacancyPage user={user} onLogout={handleLogout} />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            } 
+            element={<VacancyPage user={mockUser} onLogout={handleLogout} />} 
           />
           
-          <Route 
-            path="/profile" 
-            element={
-              isAuthenticated && user ? (
-                <ProfilePage user={user} onLogout={handleLogout} />
-              ) : (
-                <Navigate to="/login" replace />
-              )
-            } 
-          />
-          
-          {/* Redirect all other routes to home */}
-          <Route path="*" element={<Navigate to="/" replace />} />
+          {/* Redirect all other routes to dashboard */}
+          <Route path="*" element={<Navigate to="/dashboard" replace />} />
         </Routes>
       </BrowserRouter>
     </div>
