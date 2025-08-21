@@ -205,7 +205,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
     return `${days} дн назад`;
   };
 
-  const getPriorityIcon = (notification: Notification): JSX.Element | null => {
+  const getPriorityIcon = (notification: Notification): React.JSX.Element | null => {
     if (notification.priority === NotificationPriority.HIGH) {
       return <Star className="h-3 w-3 text-red-500 fill-current" />;
     }
