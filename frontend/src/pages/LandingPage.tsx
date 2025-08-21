@@ -327,7 +327,7 @@ const LandingPage = () => {
             Присоединяйтесь к тысячам специалистов, которые уже получают предложения каждый день
           </p>
           <button 
-            onClick={() => navigate('/register')}
+            onClick={() => navigate('/dashboard')}
             className="inline-flex items-center space-x-3 px-10 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-colors font-semibold text-lg"
           >
             <span>Начать поиск бесплатно</span>
