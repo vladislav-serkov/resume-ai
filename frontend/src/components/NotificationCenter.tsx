@@ -144,7 +144,7 @@ const NotificationCenter: React.FC<NotificationCenterProps> = ({ user }) => {
   useEffect(() => {
     setNotifications(mockNotifications);
     setUnreadCount(mockNotifications.filter(n => !n.read).length);
-  }, []);
+  }, [mockNotifications]);
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
