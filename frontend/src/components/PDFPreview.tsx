@@ -96,7 +96,7 @@ const PDFPreview: React.FC<PDFPreviewProps> = ({ resumeData, isAdapted = false }
             <div className="mb-4">
               <h2 className="text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Опыт работы</h2>
               <div className="space-y-3">
-                {(isAdapted ? resumeData.adaptedExperience || resumeData.experience : resumeData.experience).map((exp, idx) => (
+                {(isAdapted ? resumeData.adaptedExperience || resumeData.experience : resumeData.experience).map((exp: any, idx: number) => (
                   <div key={idx} className="text-xs">
                     <div className="flex justify-between items-start mb-1">
                       <div>
