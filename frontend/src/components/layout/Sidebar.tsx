@@ -10,7 +10,6 @@ import {
   ChevronRight,
   LogOut
 } from 'lucide-react';
-import NotificationCenter from '../NotificationCenter';
 
 interface SidebarProps {
   user: {
