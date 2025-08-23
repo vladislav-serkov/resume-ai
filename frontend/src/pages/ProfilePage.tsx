@@ -1,869 +1,213 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import NotificationCenter from '../components/NotificationCenter';
-import ResumeBuilder from '../components/ResumeBuilder';
-import StatsMini from '../components/StatsMini';
-import ResumeMini from '../components/ResumeMini';
-import { 
-  ArrowLeft, 
-  User, 
-  Mail, 
-  MapPin, 
-  Phone,
-  Upload,
-  Download,
-  Edit,
-  Save,
-  X,
-  CheckCircle,
-  FileText,
-  Sparkles,
-  Bot,
-  TrendingUp,
-  LogOut,
-  Settings,
-  Eye,
-  Zap,
-  Target,
-  PlusCircle
-} from 'lucide-react';
-import {
-  Chart as ChartJS,
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-} from 'chart.js';
-import { Line } from 'react-chartjs-2';
-
-// Регистрируем компоненты Chart.js
-ChartJS.register(
-  CategoryScale,
-  LinearScale,
-  PointElement,
-  LineElement,
-  Title,
-  Tooltip,
-  Legend
-);
-
-interface User {
-  name: string;
-  position: string;
-  avatar: string;
-  email: string;
-}
-
-interface ProfilePageProps {
-  user: User;
-  onLogout: () => void;
-}
+import { User, Phone, Crown, Edit2, Save, X } from 'lucide-react';
 
 interface ProfileData {
-  name: string;
-  email: string;
+  fullName: string;
   phone: string;
-  location: string;
-  position: string;
-  experience: string;
-  about: string;
-  skills: string[];
-  salary: string;
-  employment: string;
-  remote: boolean;
+  subscription: {
+    plan: string;
+    status: string;
+    expiresAt: string;
+  };
 }
 
-interface Resume {
-  id: number;
-  name: string;
-  isOriginal: boolean;
-  uploadDate?: string;
-  adaptations?: number;
-  lastUsed?: string;
-  baseVacancy?: string;
-  adaptationDate?: string;
-  matchScore?: number;
-}
-
-interface Stats {
-  totalApplications: number;
-  aiAdaptations: number;
-  responses: number;
-  interviews: number;
-  successRate: number;
-}
-
-const ProfilePage: React.FC<ProfilePageProps> = ({ user, onLogout }) => {
-  const navigate = useNavigate();
-  const [activeTab, setActiveTab] = useState<string>('profile');
-  const [isEditing, setIsEditing] = useState<boolean>(false);
-  const [showResumeBuilder, setShowResumeBuilder] = useState<boolean>(false);
+/**
+ * Страница профиля - управление личными данными и информацией о подписке
+ */
+const ProfilePage: React.FC = () => {
+  const [isEditing, setIsEditing] = useState(false);
   const [profileData, setProfileData] = useState<ProfileData>({
-    name: user.name,
-    email: user.email,
+    fullName: 'Анна Иванова',
     phone: '+7 (999) 123-45-67',
-    location: 'Москва',
-    position: user.position,
-    experience: '5+ лет',
-    about: 'Опытный Frontend разработчик с глубокими знаниями React, TypeScript и современных технологий веб-разработки. Имею опыт руководства командой и менторства junior разработчиков.',
-    skills: ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Redux', 'Next.js', 'GraphQL', 'Jest', 'Docker', 'AWS'],
-    salary: '200 000 - 350 000 ₽',
-    employment: 'Полная занятость',
-    remote: true
+    subscription: {
+      plan: 'Стандарт',
+      status: 'Активна',
+      expiresAt: '15 августа 2024'
+    }
   });
 
-  const mockResumes: Resume[] = [
-    {
-      id: 1,
-      name: 'Основное резюме',
-      isOriginal: true,
-      uploadDate: '2024-01-10',
-      adaptations: 15,
-      lastUsed: '2024-01-15'
-    },
-    {
-      id: 2,
-      name: 'Адаптированное для Яндекс',
-      isOriginal: false,
-      baseVacancy: 'Senior Frontend Developer - Яндекс',
-      adaptationDate: '2024-01-15',
-      matchScore: 92
-    },
-    {
-      id: 3,
-      name: 'Адаптированное для Avito',
-      isOriginal: false,
-      baseVacancy: 'React Developer - Avito',
-      adaptationDate: '2024-01-14',
-      matchScore: 87
+  const [editData, setEditData] = useState<ProfileData>(profileData);
+
+  const handleEdit = () => {
+    setEditData(profileData);
+    setIsEditing(true);
+  };
+
+  const handleSave = () => {
+    setProfileData(editData);
+    setIsEditing(false);
+  };
+
+  const handleCancel = () => {
+    setEditData(profileData);
+    setIsEditing(false);
+  };
+
+  const getSubscriptionStatusColor = (status: string) => {
+    switch (status.toLowerCase()) {
+      case 'активна':
+        return 'text-green-700 bg-green-100';
+      case 'истекает':
+        return 'text-orange-700 bg-orange-100';
+      case 'неактивна':
+        return 'text-red-700 bg-red-100';
+      default:
+        return 'text-gray-700 bg-gray-100';
     }
-  ];
-
-  const mockStats: Stats = {
-    totalApplications: 24,
-    aiAdaptations: 45,
-    responses: 8,
-    interviews: 3,
-    successRate: 33
-  };
-
-  const handleSave = (): void => {
-    setIsEditing(false);
-    // Simulate API call
-    console.log('Saving profile data:', profileData);
-  };
-
-  const handleCancel = (): void => {
-    setIsEditing(false);
-    // Reset data
-    setProfileData({
-      name: user.name,
-      email: user.email,
-      phone: '+7 (999) 123-45-67',
-      location: 'Москва',
-      position: user.position,
-      experience: '5+ лет',
-      about: 'Опытный Frontend разработчик с глубокими знаниями React, TypeScript и современных технологий веб-разработки.',
-      skills: ['React', 'TypeScript', 'JavaScript', 'Node.js', 'Redux', 'Next.js', 'GraphQL', 'Jest', 'Docker', 'AWS'],
-      salary: '200 000 - 350 000 ₽',
-      employment: 'Полная занятость',
-      remote: true
-    });
-  };
-
-  const handleInputChange = (field: keyof ProfileData, value: string | boolean): void => {
-    setProfileData(prev => ({
-      ...prev,
-      [field]: value
-    }));
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <header className="bg-white shadow-sm border-b border-gray-200">
-        <div className="max-w-7xl mx-auto px-6 py-4">
+    <div className="space-y-8 max-w-4xl">
+      {/* Page header */}
+      <div>
+        <h1 className="text-2xl font-bold text-gray-900">Профиль</h1>
+        <p className="text-gray-600 mt-1">
+          Управление личными данными и подпиской
+        </p>
+      </div>
+
+      {/* Profile Card */}
+      <div className="bg-white rounded-xl shadow-sm border border-gray-200 overflow-hidden">
+        {/* Header */}
+        <div className="bg-gradient-to-r from-blue-600 to-purple-600 px-6 py-8">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => navigate('/dashboard')}
-                className="flex items-center space-x-2 text-gray-600 hover:text-gray-900 transition-colors"
-              >
-                <ArrowLeft className="h-5 w-5" />
-                <span>Назад к поиску</span>
-              </button>
-            </div>
-
-            <div className="flex items-center space-x-4">
-              {/* Resume and Stats Mini Components */}
-              <ResumeMini user={user} />
-              <StatsMini user={user} />
-              <NotificationCenter user={user} />
-              
-              <div className="flex items-center space-x-3">
-                <div className="text-right">
-                  <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                  <p className="text-xs text-gray-600">{user.position}</p>
-                </div>
-                <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                  {user.avatar}
-                </div>
+              <div className="h-20 w-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white text-2xl font-bold">
+                АИ
               </div>
-              
-              <button
-                onClick={onLogout}
-                className="p-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
-              >
-                <LogOut className="h-5 w-5" />
-              </button>
-            </div>
-          </div>
-        </div>
-      </header>
-
-      <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Profile Header */}
-        <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-8 mb-8">
-          <div className="flex items-start justify-between">
-            <div className="flex items-start space-x-6">
-              <div className="h-24 w-24 bg-gradient-to-r from-blue-600 to-purple-600 rounded-2xl flex items-center justify-center text-white text-2xl font-bold">
-                {user.avatar}
-              </div>
-              <div>
-                <h1 className="text-3xl font-bold text-gray-900 mb-2">{profileData.name}</h1>
-                <p className="text-xl text-gray-700 mb-2">{profileData.position}</p>
-                <div className="flex items-center space-x-4 text-gray-600 mb-4">
-                  <div className="flex items-center space-x-1">
-                    <MapPin className="h-4 w-4" />
-                    <span>{profileData.location}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Mail className="h-4 w-4" />
-                    <span>{profileData.email}</span>
-                  </div>
-                  <div className="flex items-center space-x-1">
-                    <Phone className="h-4 w-4" />
-                    <span>{profileData.phone}</span>
-                  </div>
-                </div>
-                <div className="flex items-center space-x-3">
-                  <span className="px-3 py-1 bg-green-100 text-green-800 text-sm font-medium rounded-full">
-                    Активный поиск
-                  </span>
-                  <span className="px-3 py-1 bg-blue-100 text-blue-800 text-sm font-medium rounded-full">
-                    Готов к удаленной работе
-                  </span>
-                </div>
+              <div className="text-white">
+                <h2 className="text-2xl font-bold">{profileData.fullName}</h2>
+                <p className="text-blue-100">Frontend Developer</p>
               </div>
             </div>
             
-            <div className="flex items-center space-x-3">
-              {!isEditing ? (
-                <button
-                  onClick={() => setIsEditing(true)}
-                  className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors"
-                >
-                  <Edit className="h-4 w-4" />
-                  <span>Редактировать</span>
-                </button>
-              ) : (
-                <div className="flex space-x-2">
-                  <button
-                    onClick={handleSave}
-                    className="flex items-center space-x-2 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
-                  >
-                    <Save className="h-4 w-4" />
-                    <span>Сохранить</span>
-                  </button>
-                  <button
-                    onClick={handleCancel}
-                    className="flex items-center space-x-2 px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:border-gray-400 transition-colors"
-                  >
-                    <X className="h-4 w-4" />
-                    <span>Отмена</span>
-                  </button>
-                </div>
-              )}
-            </div>
+            {!isEditing && (
+              <button
+                onClick={handleEdit}
+                className="flex items-center space-x-2 px-4 py-2 bg-white bg-opacity-20 text-white rounded-lg hover:bg-opacity-30 transition-colors"
+              >
+                <Edit2 className="h-4 w-4" />
+                <span>Редактировать</span>
+              </button>
+            )}
           </div>
         </div>
 
-        {/* Navigation Tabs */}
-        <div className="mb-8">
-          <div className="border-b border-gray-200">
-            <nav className="-mb-px flex space-x-8">
-              <button
-                onClick={() => setActiveTab('profile')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'profile'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <User className="h-4 w-4 inline-block mr-2" />
-                Профиль
-              </button>
-              <button
-                onClick={() => setActiveTab('resumes')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'resumes'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <FileText className="h-4 w-4 inline-block mr-2" />
-                Резюме
-              </button>
-              <button
-                onClick={() => setActiveTab('stats')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'stats'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <TrendingUp className="h-4 w-4 inline-block mr-2" />
-                Статистика
-              </button>
-              <button
-                onClick={() => setActiveTab('settings')}
-                className={`py-4 px-1 border-b-2 font-medium text-sm ${
-                  activeTab === 'settings'
-                    ? 'border-blue-500 text-blue-600'
-                    : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
-                }`}
-              >
-                <Settings className="h-4 w-4 inline-block mr-2" />
-                Настройки
-              </button>
-            </nav>
-          </div>
-        </div>
-
-        {/* Profile Tab */}
-        {activeTab === 'profile' && (
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <div className="space-y-6">
-              {/* Basic Info */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Основная информация</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Имя</label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={profileData.name}
-                        onChange={(e) => handleInputChange('name', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    ) : (
-                      <p className="text-gray-900">{profileData.name}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Email</label>
-                    {isEditing ? (
-                      <input
-                        type="email"
-                        value={profileData.email}
-                        onChange={(e) => handleInputChange('email', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    ) : (
-                      <p className="text-gray-900">{profileData.email}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Телефон</label>
-                    {isEditing ? (
-                      <input
-                        type="tel"
-                        value={profileData.phone}
-                        onChange={(e) => handleInputChange('phone', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    ) : (
-                      <p className="text-gray-900">{profileData.phone}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Город</label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={profileData.location}
-                        onChange={(e) => handleInputChange('location', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    ) : (
-                      <p className="text-gray-900">{profileData.location}</p>
-                    )}
-                  </div>
-                </div>
-              </div>
-
-              {/* About */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">О себе</h3>
+        {/* Content */}
+        <div className="p-6 space-y-6">
+          {/* Personal Information */}
+          <div>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <User className="h-5 w-5 mr-2 text-blue-600" />
+              Личная информация
+            </h3>
+            
+            <div className="grid md:grid-cols-2 gap-4">
+              {/* Full Name */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  ФИО
+                </label>
                 {isEditing ? (
-                  <textarea
-                    value={profileData.about}
-                    onChange={(e) => handleInputChange('about', e.target.value)}
-                    rows={4}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  <input
+                    type="text"
+                    value={editData.fullName}
+                    onChange={(e) => setEditData({ ...editData, fullName: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                   />
                 ) : (
-                  <p className="text-gray-700 leading-relaxed">{profileData.about}</p>
+                  <p className="text-gray-900 py-2">{profileData.fullName}</p>
+                )}
+              </div>
+
+              {/* Phone */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Номер телефона
+                </label>
+                {isEditing ? (
+                  <input
+                    type="tel"
+                    value={editData.phone}
+                    onChange={(e) => setEditData({ ...editData, phone: e.target.value })}
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                  />
+                ) : (
+                  <p className="text-gray-900 py-2 flex items-center">
+                    <Phone className="h-4 w-4 mr-2 text-gray-500" />
+                    {profileData.phone}
+                  </p>
                 )}
               </div>
             </div>
 
-            <div className="space-y-6">
-              {/* Job Preferences */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Предпочтения по работе</h3>
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Желаемая должность</label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={profileData.position}
-                        onChange={(e) => handleInputChange('position', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    ) : (
-                      <p className="text-gray-900">{profileData.position}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Зарплатные ожидания</label>
-                    {isEditing ? (
-                      <input
-                        type="text"
-                        value={profileData.salary}
-                        onChange={(e) => handleInputChange('salary', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      />
-                    ) : (
-                      <p className="text-gray-900">{profileData.salary}</p>
-                    )}
-                  </div>
-                  
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-2">Тип занятости</label>
-                    {isEditing ? (
-                      <select
-                        value={profileData.employment}
-                        onChange={(e) => handleInputChange('employment', e.target.value)}
-                        className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                      >
-                        <option value="Полная занятость">Полная занятость</option>
-                        <option value="Частичная занятость">Частичная занятость</option>
-                        <option value="Проектная работа">Проектная работа</option>
-                        <option value="Стажировка">Стажировка</option>
-                      </select>
-                    ) : (
-                      <p className="text-gray-900">{profileData.employment}</p>
-                    )}
-                  </div>
-                  
-                  <div className="flex items-center space-x-3">
-                    {isEditing ? (
-                      <input
-                        type="checkbox"
-                        checked={profileData.remote}
-                        onChange={(e) => handleInputChange('remote', e.target.checked)}
-                        className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
-                      />
-                    ) : (
-                      <CheckCircle className={`h-5 w-5 ${profileData.remote ? 'text-green-600' : 'text-gray-400'}`} />
-                    )}
-                    <span className="text-gray-700">Готов к удаленной работе</span>
-                  </div>
-                </div>
-              </div>
-
-              {/* Skills */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Навыки</h3>
-                <div className="flex flex-wrap gap-2">
-                  {profileData.skills.map((skill, index) => (
-                    <span key={index} className="px-3 py-1 bg-blue-100 text-blue-800 text-sm rounded-full font-medium">
-                      {skill}
-                    </span>
-                  ))}
-                </div>
-                {isEditing && (
-                  <button className="mt-3 text-blue-600 hover:text-blue-800 text-sm font-medium">
-                    + Добавить навык
-                  </button>
-                )}
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Resumes Tab */}
-        {activeTab === 'resumes' && (
-          <div className="space-y-6">
-            {/* Upload new resume */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <div className="flex items-center space-x-3 mb-6">
-                <h3 className="text-lg font-semibold text-gray-900">Управление резюме</h3>
-                <button 
-                  onClick={() => setShowResumeBuilder(true)}
-                  className="flex items-center space-x-2 px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors"
+            {/* Edit buttons */}
+            {isEditing && (
+              <div className="flex space-x-3 mt-4">
+                <button
+                  onClick={handleSave}
+                  className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  <PlusCircle className="h-4 w-4" />
-                  <span>Создать резюме</span>
+                  <Save className="h-4 w-4" />
+                  <span>Сохранить</span>
                 </button>
-                <button className="flex items-center space-x-2 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors">
-                  <Upload className="h-4 w-4" />
-                  <span>Загрузить файл</span>
+                <button
+                  onClick={handleCancel}
+                  className="flex items-center space-x-2 px-4 py-2 bg-gray-200 text-gray-700 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                  <X className="h-4 w-4" />
+                  <span>Отмена</span>
                 </button>
               </div>
-
-              <div className="space-y-4">
-                {mockResumes.map((resume) => (
-                  <div key={resume.id} className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-start space-x-4">
-                        <div className={`h-12 w-12 rounded-lg flex items-center justify-center ${
-                          resume.isOriginal ? 'bg-blue-100' : 'bg-purple-100'
-                        }`}>
-                          {resume.isOriginal ? (
-                            <FileText className={`h-6 w-6 ${resume.isOriginal ? 'text-blue-600' : 'text-purple-600'}`} />
-                          ) : (
-                            <Sparkles className="h-6 w-6 text-purple-600" />
-                          )}
-                        </div>
-                        
-                        <div className="flex-1">
-                          <div className="flex items-center space-x-3 mb-1">
-                            <h4 className="font-semibold text-gray-900">{resume.name}</h4>
-                            {resume.isOriginal && (
-                              <span className="px-2 py-1 bg-blue-100 text-blue-800 text-xs font-medium rounded-full">
-                                Оригинал
-                              </span>
-                            )}
-                            {!resume.isOriginal && (
-                              <div className="flex items-center space-x-2">
-                                <span className="px-2 py-1 bg-purple-100 text-purple-800 text-xs font-medium rounded-full">
-                                  AI-адаптация
-                                </span>
-                                {resume.matchScore && (
-                                  <div className="flex items-center space-x-1 text-xs text-gray-600">
-                                    <Target className="h-3 w-3" />
-                                    <span>{resume.matchScore}%</span>
-                                  </div>
-                                )}
-                              </div>
-                            )}
-                          </div>
-                          
-                          {resume.isOriginal ? (
-                            <div className="text-sm text-gray-600">
-                              <p>Загружено: {resume.uploadDate ? new Date(resume.uploadDate).toLocaleDateString('ru-RU') : 'Неизвестно'}</p>
-                              <p>Адаптаций: {resume.adaptations} • Последнее использование: {resume.lastUsed ? new Date(resume.lastUsed).toLocaleDateString('ru-RU') : 'Неизвестно'}</p>
-                            </div>
-                          ) : (
-                            <div className="text-sm text-gray-600">
-                              <p>Для вакансии: {resume.baseVacancy}</p>
-                              <p>Создано: {resume.adaptationDate ? new Date(resume.adaptationDate).toLocaleDateString('ru-RU') : 'Неизвестно'}</p>
-                            </div>
-                          )}
-                        </div>
-                      </div>
-                      
-                      <div className="flex items-center space-x-2">
-                        <button className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
-                          <Eye className="h-4 w-4" />
-                          <span className="text-sm">Просмотр</span>
-                        </button>
-                        <button className="flex items-center space-x-1 px-3 py-2 text-gray-600 hover:text-gray-900 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
-                          <Download className="h-4 w-4" />
-                          <span className="text-sm">Скачать</span>
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
+            )}
           </div>
-        )}
 
-        {/* Stats Tab */}
-        {activeTab === 'stats' && (
-          <div className="space-y-6">
-            {/* Stats cards */}
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 bg-blue-100 rounded-2xl flex items-center justify-center">
-                    <Zap className="h-6 w-6 text-blue-600" />
-                  </div>
-                  <TrendingUp className="h-5 w-5 text-green-500" />
+          {/* Subscription Information */}
+          <div className="border-t border-gray-200 pt-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-4 flex items-center">
+              <Crown className="h-5 w-5 mr-2 text-purple-600" />
+              Подписка
+            </h3>
+            
+            <div className="bg-gray-50 rounded-lg p-4">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h4 className="text-lg font-medium text-gray-900">
+                    Тариф "{profileData.subscription.plan}"
+                  </h4>
+                  <p className="text-gray-600">
+                    Действует до {profileData.subscription.expiresAt}
+                  </p>
                 </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.totalApplications}</div>
-                <div className="text-sm text-gray-600">Всего откликов</div>
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getSubscriptionStatusColor(profileData.subscription.status)}`}>
+                  {profileData.subscription.status}
+                </span>
               </div>
               
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 bg-purple-100 rounded-2xl flex items-center justify-center">
-                    <Bot className="h-6 w-6 text-purple-600" />
-                  </div>
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.aiAdaptations}</div>
-                <div className="text-sm text-gray-600">AI-адаптаций</div>
-              </div>
-              
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 bg-green-100 rounded-2xl flex items-center justify-center">
-                    <CheckCircle className="h-6 w-6 text-green-600" />
-                  </div>
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.responses}</div>
-                <div className="text-sm text-gray-600">Ответов получено</div>
-              </div>
-              
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <div className="flex items-center justify-between mb-4">
-                  <div className="h-12 w-12 bg-orange-100 rounded-2xl flex items-center justify-center">
-                    <Target className="h-6 w-6 text-orange-600" />
-                  </div>
-                  <TrendingUp className="h-5 w-5 text-green-500" />
-                </div>
-                <div className="text-2xl font-bold text-gray-900 mb-1">{mockStats.successRate}%</div>
-                <div className="text-sm text-gray-600">Успешность откликов</div>
-              </div>
-            </div>
-
-            {/* Charts */}
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              {/* Activity Chart */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Активность за месяц</h3>
-                <div style={{ height: '300px' }}>
-                  <Line 
-                    data={{
-                      labels: ['1 нед', '2 нед', '3 нед', '4 нед'],
-                      datasets: [
-                        {
-                          label: 'Отклики',
-                          data: [4, 7, 6, 8],
-                          borderColor: 'rgb(59, 130, 246)',
-                          backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                          tension: 0.4,
-                        },
-                        {
-                          label: 'AI-адаптации',
-                          data: [8, 12, 10, 15],
-                          borderColor: 'rgb(147, 51, 234)',
-                          backgroundColor: 'rgba(147, 51, 234, 0.1)',
-                          tension: 0.4,
-                        },
-                        {
-                          label: 'Ответы',
-                          data: [1, 2, 2, 3],
-                          borderColor: 'rgb(16, 185, 129)',
-                          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                          tension: 0.4,
-                        }
-                      ]
-                    }}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'top',
-                          labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                          }
-                        }
-                      },
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          ticks: {
-                            stepSize: 1
-                          }
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-
-              {/* Success Rate Chart */}
-              <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-6">Динамика успешности</h3>
-                <div style={{ height: '300px' }}>
-                  <Line 
-                    data={{
-                      labels: ['1 нед', '2 нед', '3 нед', '4 нед'],
-                      datasets: [
-                        {
-                          label: 'Успешность (%)',
-                          data: [25, 29, 33, 38],
-                          borderColor: 'rgb(16, 185, 129)',
-                          backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                          tension: 0.4,
-                          fill: true,
-                        }
-                      ]
-                    }}
-                    options={{
-                      responsive: true,
-                      maintainAspectRatio: false,
-                      plugins: {
-                        legend: {
-                          position: 'top',
-                          labels: {
-                            usePointStyle: true,
-                            padding: 20,
-                          }
-                        }
-                      },
-                      scales: {
-                        y: {
-                          beginAtZero: true,
-                          max: 100,
-                          ticks: {
-                            callback: function(value) {
-                              return value + '%';
-                            }
-                          }
-                        }
-                      }
-                    }}
-                  />
-                </div>
-              </div>
-            </div>
-
-            {/* Weekly Activity Chart */}
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Активность по дням недели</h3>
-              <div style={{ height: '250px' }}>
-                <Line 
-                  data={{
-                    labels: ['Понедельник', 'Вторник', 'Среда', 'Четверг', 'Пятница', 'Суббота', 'Воскресенье'],
-                    datasets: [
-                      {
-                        label: 'Отклики',
-                        data: [3, 2, 4, 5, 3, 1, 0],
-                        borderColor: 'rgb(59, 130, 246)',
-                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
-                        tension: 0.4,
-                      },
-                      {
-                        label: 'Просмотры вакансий',
-                        data: [12, 8, 15, 18, 14, 6, 3],
-                        borderColor: 'rgb(245, 158, 11)',
-                        backgroundColor: 'rgba(245, 158, 11, 0.1)',
-                        tension: 0.4,
-                      }
-                    ]
-                  }}
-                  options={{
-                    responsive: true,
-                    maintainAspectRatio: false,
-                    plugins: {
-                      legend: {
-                        position: 'top',
-                        labels: {
-                          usePointStyle: true,
-                          padding: 20,
-                        }
-                      }
-                    },
-                    scales: {
-                      y: {
-                        beginAtZero: true,
-                        ticks: {
-                          stepSize: 1
-                        }
-                      }
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        )}
-
-        {/* Settings Tab */}
-        {activeTab === 'settings' && (
-          <div className="space-y-6">
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Настройки AI-ассистента</h3>
-              <div className="space-y-6">
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium text-gray-900">Автоотклик</h4>
-                    <p className="text-sm text-gray-600">Автоматически отправлять отклики на подходящие вакансии</p>
-                  </div>
-                  <input type="checkbox" defaultChecked className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium text-gray-900">Уведомления о новых вакансиях</h4>
-                    <p className="text-sm text-gray-600">Получать push-уведомления о подходящих вакансиях</p>
-                  </div>
-                  <input type="checkbox" defaultChecked className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                </div>
-                
-                <div className="flex items-center justify-between">
-                  <div>
-                    <h4 className="font-medium text-gray-900">Еженедельные отчеты</h4>
-                    <p className="text-sm text-gray-600">Получать отчеты об активности и статистике</p>
-                  </div>
-                  <input type="checkbox" defaultChecked className="rounded border-gray-300 text-blue-600 focus:ring-blue-500" />
-                </div>
-              </div>
-            </div>
-
-            <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-6">Безопасность</h3>
-              <div className="space-y-4">
-                <button className="w-full text-left px-4 py-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
-                  Изменить пароль
+              <div className="flex space-x-3">
+                <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
+                  Изменить тариф
                 </button>
-                <button className="w-full text-left px-4 py-3 border border-gray-300 rounded-lg hover:border-gray-400 transition-colors">
-                  Двухфакторная аутентификация
-                </button>
-                <button className="w-full text-left px-4 py-3 border border-red-300 text-red-600 rounded-lg hover:border-red-400 transition-colors">
-                  Удалить аккаунт
+                <button className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50 transition-colors">
+                  История платежей
                 </button>
               </div>
             </div>
           </div>
-        )}
+
+          {/* Additional Info */}
+          <div className="border-t border-gray-200 pt-6">
+            <div className="bg-blue-50 rounded-lg p-4">
+              <h4 className="font-medium text-blue-900 mb-2">Полезная информация</h4>
+              <ul className="text-sm text-blue-800 space-y-1">
+                <li>• Ваш профиль заполнен на 85%</li>
+                <li>• Для лучших результатов добавьте резюме</li>
+                <li>• Настройте уведомления в разделе "Настройки"</li>
+              </ul>
+            </div>
+          </div>
+        </div>
       </div>
-
-      {/* Resume Builder Modal */}
-      <ResumeBuilder 
-        user={user} 
-        isOpen={showResumeBuilder} 
-        onClose={() => setShowResumeBuilder(false)} 
-      />
     </div>
   );
 };
