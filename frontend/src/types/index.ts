@@ -1,14 +1,9 @@
-// Core user and authentication types
+// Core user types
 export interface User {
   name: string;
   position: string;
   avatar: string;
   email: string;
-}
-
-export interface AuthState {
-  isAuthenticated: boolean;
-  user: User | null;
 }
 
 // Vacancy and job related types
@@ -73,93 +68,5 @@ export interface AIStatus {
   last_updated: string;
 }
 
-// Filter and search types
-export interface SearchFilters {
-  location: string;
-  salary: string;
-  experience: string;
-  remote: boolean;
-}
-
-// Component props types
-export interface DashboardProps {
-  user: User;
-  onLogout: () => void;
-}
-
-export interface VacancyAnalyzerProps {
-  vacancyText?: string;
-  onAnalysisComplete?: (analysis: VacancyAnalysis) => void;
-}
-
-export interface LoadingSpinnerProps {
-  text?: string;
-  size?: SpinnerSize;
-}
-
-export enum SpinnerSize {
-  SMALL = 'sm',
-  MEDIUM = 'md',
-  LARGE = 'lg'
-}
-
-// Toast and notification types
-export interface Toast {
-  id: string;
-  title?: string;
-  description?: string;
-  variant?: ToastVariant;
-  action?: React.ReactNode;
-  open?: boolean;
-  onOpenChange?: (open: boolean) => void;
-}
-
-export enum ToastVariant {
-  DEFAULT = 'default',
-  DESTRUCTIVE = 'destructive',
-  SUCCESS = 'success',
-  WARNING = 'warning'
-}
-
-export interface ToastState {
-  toasts: Toast[];
-}
-
-export interface ToastAction {
-  type: ToastActionType;
-  toast?: Toast;
-  toastId?: string | undefined;
-}
-
-export enum ToastActionType {
-  ADD_TOAST = 'ADD_TOAST',
-  UPDATE_TOAST = 'UPDATE_TOAST',
-  DISMISS_TOAST = 'DISMISS_TOAST',
-  REMOVE_TOAST = 'REMOVE_TOAST'
-}
-
-// Form and validation types
-export interface LoginFormData {
-  email: string;
-  password: string;
-}
-
-export interface RegisterFormData {
-  name: string;
-  email: string;
-  password: string;
-  confirmPassword: string;
-}
-
-// API response types
-export interface ApiResponse<T> {
-  success: boolean;
-  data?: T;
-  message?: string;
-  error?: string;
-}
-
 // Event handler types
 export type VoidFunction = () => void;
-export type LoginHandler = (userData: User) => void;
-export type LogoutHandler = VoidFunction;
