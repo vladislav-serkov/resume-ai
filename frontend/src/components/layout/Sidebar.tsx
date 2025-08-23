@@ -63,7 +63,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
   return (
     <div className="w-64 bg-white border-r border-gray-200 flex flex-col h-full">
       {/* Logo */}
-      <div className="px-6 py-6">
+      <div className="px-6 py-6 flex-shrink-0">
         <div className="flex items-center space-x-3">
           <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-xl flex items-center justify-center">
             <Sparkles className="h-6 w-6 text-white" />
@@ -75,7 +75,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 space-y-1">
+      <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
         {navigationItems.map((item) => {
           const Icon = item.icon;
           const isActive = location.pathname === item.path;
@@ -105,7 +105,7 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
       </nav>
 
       {/* User section */}
-      <div className="p-4 border-t border-gray-200">
+      <div className="p-4 border-t border-gray-200 flex-shrink-0">
         <div className="flex items-center space-x-3">
           <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
             {user.avatar}
