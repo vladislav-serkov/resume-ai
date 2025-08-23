@@ -11,11 +11,6 @@ interface AISettings {
   experienceAdaptation: string;
 }
 
-interface NotificationSettings {
-  responseReport: boolean;
-  dailyReport: boolean;
-}
-
 /**
  * Страница настроек - конфигурация AI агента и уведомлений
  */
