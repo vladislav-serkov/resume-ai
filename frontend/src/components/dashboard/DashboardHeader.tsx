@@ -75,7 +75,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
           {/* User menu */}
           <div className="flex items-center space-x-4">
-            <NotificationCenter user={user} />
             
             <button
               onClick={onLogout}
