@@ -208,3 +208,5 @@ agent_communication:
     message: "✅ All backend API tests completed successfully! Tested 10/10 endpoints including new AI status functionality. All APIs working correctly with proper MongoDB integration, data persistence, and correct response formats. AI status endpoints support both GET (retrieve/create default) and PUT (update) operations with proper timestamp handling."
   - agent: "main"
     message: "✅ Added sidebar navigation with 5 pages: Отклики, Статистика, Тарифы, Профиль, Настройки. Implemented left sidebar layout with responsive design, pricing tiers, profile management, and comprehensive AI agent settings including salary range, employment type, reliability, blacklisted companies, ATS optimization levels, and Telegram notification toggles."
+  - agent: "main"
+    message: "✅ Improved sidebar design with visual hierarchy (navigation groups) and better icon/text alignment. Completely removed all notification components and Telegram notification settings from the application."
