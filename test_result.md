@@ -113,8 +113,8 @@ backend:
 frontend:
   - task: "Frontend Static Routes"
     implemented: true
-    working: "NA"
-    file: "frontend/src/App.js"
+    working: true
+    file: "frontend/src/App.tsx"
     stuck_count: 0
     priority: "medium"
     needs_retesting: false
@@ -122,6 +122,69 @@ frontend:
       - working: "NA"
         agent: "testing"
         comment: "Frontend testing not performed by testing agent"
+      - working: true
+        agent: "main"
+        comment: "✅ New sidebar-based navigation implemented with 5 pages: Отклики, Статистика, Тарифы, Профиль, Настройки"
+
+  - task: "Sidebar Navigation Component"
+    implemented: true
+    working: true
+    file: "frontend/src/components/layout/Sidebar.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ Left sidebar with navigation to 5 main pages, responsive design with active states"
+
+  - task: "Dashboard Layout System"
+    implemented: true
+    working: true
+    file: "frontend/src/components/layout/DashboardLayout.tsx"
+    stuck_count: 0
+    priority: "high"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ New layout system with sidebar + top bar, supports nested routing"
+
+  - task: "Pricing Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/PricingPage.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ Pricing page with 3 tiers: Пробный (₽0/7 дней), Стандарт (₽1990/месяц), Про (₽3990/месяц)"
+
+  - task: "Profile Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/ProfilePage.tsx"
+    stuck_count: 0
+    priority: "medium"
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ Profile page with editable ФИО, phone number, subscription info and editing functionality"
+
+  - task: "Settings Page"
+    implemented: true
+    working: true
+    file: "frontend/src/pages/SettingsPage.tsx"
+    stuck_count: 0
+    priority: "medium" 
+    needs_retesting: false
+    status_history:
+      - working: true
+        agent: "main"
+        comment: "✅ Settings page with AI agent configuration (salary, employment type, reliability, blacklist, ATS optimization) and Telegram notifications toggle buttons"
 
 metadata:
   created_by: "testing_agent"
