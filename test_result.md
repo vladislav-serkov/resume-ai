@@ -210,3 +210,5 @@ agent_communication:
     message: "✅ Added sidebar navigation with 5 pages: Отклики, Статистика, Тарифы, Профиль, Настройки. Implemented left sidebar layout with responsive design, pricing tiers, profile management, and comprehensive AI agent settings including salary range, employment type, reliability, blacklisted companies, ATS optimization levels, and Telegram notification toggles."
   - agent: "main"
     message: "✅ Improved sidebar design with visual hierarchy (navigation groups) and better icon/text alignment. Completely removed all notification components and Telegram notification settings from the application."
+  - agent: "main"
+    message: "✅ Completed comprehensive cleanup of unused frontend code: Removed 13 unused components (LoginPage, RegisterPage, Dashboard, DashboardHeader, DashboardTopBar, SearchFilters, VacancyCard, HistoryAndStats, LoadingSpinner, ResumeViewer, VacancyAnalyzer, StatsMini, ResumeMini, ResumeBuilder, PDFPreview), entire UI library (45 components), unused hooks, utils, types, constants. Project optimized from 60+ files to essential 20 files."
