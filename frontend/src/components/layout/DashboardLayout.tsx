@@ -11,18 +11,18 @@ interface DashboardLayoutProps {
 
 const DashboardLayout: React.FC<DashboardLayoutProps> = ({ user, onLogout }) => {
   return (
-    <div className="min-h-screen bg-gray-50 flex">
+    <div className="h-screen bg-gray-50 flex overflow-hidden">
       {/* Sidebar */}
       <Sidebar user={user} />
       
       {/* Main content */}
-      <div className="flex-1 flex flex-col overflow-hidden">
+      <div className="flex-1 flex flex-col min-h-0">
         {/* Top navigation */}
         <DashboardTopBar user={user} onLogout={onLogout} />
         
         {/* Page content */}
-        <main className="flex-1 overflow-auto">
-          <div className="max-w-7xl mx-auto px-6 py-8">
+        <main className="flex-1 overflow-y-auto">
+          <div className="max-w-7xl mx-auto px-6 py-8 h-full">
             <Outlet />
           </div>
         </main>
