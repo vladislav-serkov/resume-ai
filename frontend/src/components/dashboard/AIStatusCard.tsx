@@ -99,7 +99,7 @@ const AIStatusCard: React.FC<AIStatusCardProps> = ({ stats }) => {
             className={`
               flex items-center space-x-2 px-4 py-2 rounded-lg font-medium transition-all
               ${isActive 
-                ? 'bg-white/20 hover:bg-white/30 text-white' 
+                ? 'bg-red-500 hover:bg-red-600 text-white' 
                 : 'bg-green-500 hover:bg-green-600 text-white'
               }
               ${isLoading ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
