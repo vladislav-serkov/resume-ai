@@ -78,6 +78,119 @@ class SimpleAPITester:
         )
         return success
 
+    def test_get_ai_status(self):
+        """Test getting AI status - should return current status or create default active status"""
+        success, response = self.run_test(
+            "Get AI Status",
+            "GET",
+            "api/ai-status",
+            200
+        )
+        if success:
+            # Verify response structure
+            required_fields = ['id', 'is_active', 'last_updated']
+            for field in required_fields:
+                if field not in response:
+                    print(f"❌ Missing required field: {field}")
+                    return False
+            print(f"✅ AI Status structure valid - Active: {response.get('is_active')}")
+        return success
+
+    def test_update_ai_status_stop(self):
+        """Test updating AI status to stopped"""
+        test_data = {
+            "is_active": False
+        }
+        success, response = self.run_test(
+            "Update AI Status (Stop)",
+            "PUT",
+            "api/ai-status",
+            200,
+            data=test_data
+        )
+        if success:
+            if response.get('is_active') != False:
+                print(f"❌ Expected is_active=False, got {response.get('is_active')}")
+                return False
+            print("✅ AI Status successfully updated to stopped")
+        return success
+
+    def test_update_ai_status_start(self):
+        """Test updating AI status to active"""
+        test_data = {
+            "is_active": True
+        }
+        success, response = self.run_test(
+            "Update AI Status (Start)",
+            "PUT",
+            "api/ai-status",
+            200,
+            data=test_data
+        )
+        if success:
+            if response.get('is_active') != True:
+                print(f"❌ Expected is_active=True, got {response.get('is_active')}")
+                return False
+            print("✅ AI Status successfully updated to active")
+        return success
+
+    def test_ai_status_persistence(self):
+        """Test that AI status changes persist in database"""
+        print("\n🔍 Testing AI Status Persistence...")
+        
+        # First, set status to False
+        test_data = {"is_active": False}
+        success1, response1 = self.run_test(
+            "Set AI Status to False",
+            "PUT",
+            "api/ai-status",
+            200,
+            data=test_data
+        )
+        
+        if not success1:
+            return False
+            
+        # Then get status to verify it persisted
+        success2, response2 = self.run_test(
+            "Verify AI Status Persisted (False)",
+            "GET",
+            "api/ai-status",
+            200
+        )
+        
+        if not success2 or response2.get('is_active') != False:
+            print(f"❌ Status persistence failed - Expected False, got {response2.get('is_active')}")
+            return False
+            
+        # Now set status to True
+        test_data = {"is_active": True}
+        success3, response3 = self.run_test(
+            "Set AI Status to True",
+            "PUT",
+            "api/ai-status",
+            200,
+            data=test_data
+        )
+        
+        if not success3:
+            return False
+            
+        # Finally get status to verify it persisted
+        success4, response4 = self.run_test(
+            "Verify AI Status Persisted (True)",
+            "GET",
+            "api/ai-status",
+            200
+        )
+        
+        if not success4 or response4.get('is_active') != True:
+            print(f"❌ Status persistence failed - Expected True, got {response4.get('is_active')}")
+            return False
+            
+        print("✅ AI Status persistence test passed")
+        return True
+
 def main():
     print("🚀 Starting Career Boost Bot Backend API Tests")
     print("=" * 50)
