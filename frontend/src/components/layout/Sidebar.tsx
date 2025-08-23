@@ -28,39 +28,54 @@ interface NavItem {
   path: string;
 }
 
+interface NavGroup {
+  title: string;
+  items: NavItem[];
+}
+
 const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
   const location = useLocation();
 
-  const navigationItems: NavItem[] = [
+  const navigationGroups: NavGroup[] = [
     {
-      id: 'responses',
-      label: 'Отклики',
-      icon: FileText,
-      path: '/dashboard/responses'
+      title: 'Навигация',
+      items: [
+        {
+          id: 'responses',
+          label: 'Отклики',
+          icon: FileText,
+          path: '/dashboard/responses'
+        },
+        {
+          id: 'statistics',
+          label: 'Статистика',
+          icon: TrendingUp,
+          path: '/dashboard/statistics'
+        },
+        {
+          id: 'pricing',
+          label: 'Тарифы',
+          icon: CreditCard,
+          path: '/dashboard/pricing'
+        }
+      ]
     },
     {
-      id: 'statistics',
-      label: 'Статистика',
-      icon: TrendingUp,
-      path: '/dashboard/statistics'
-    },
-    {
-      id: 'pricing',
-      label: 'Тарифы',
-      icon: CreditCard,
-      path: '/dashboard/pricing'
-    },
-    {
-      id: 'profile',
-      label: 'Профиль',
-      icon: User,
-      path: '/dashboard/profile'
-    },
-    {
-      id: 'settings',
-      label: 'Настройки',
-      icon: Settings,
-      path: '/dashboard/settings'
+      title: 'Профиль и настройки',
+      items: [
+        {
+          id: 'profile',
+          label: 'Профиль',
+          icon: User,
+          path: '/dashboard/profile'
+        },
+        {
+          id: 'settings',
+          label: 'Настройки',
+          icon: Settings,
+          path: '/dashboard/settings'
+        }
+      ]
     }
   ];
 
