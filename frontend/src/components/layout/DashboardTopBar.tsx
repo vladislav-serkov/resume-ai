@@ -15,9 +15,8 @@ const DashboardTopBar: React.FC<DashboardTopBarProps> = ({ user, onLogout }) => 
           {/* Page title will be handled by individual pages */}
         </div>
 
-        {/* Right side - notifications and user menu */}
+        {/* Right side - user menu */}
         <div className="flex items-center space-x-4">
-          <NotificationCenter user={user} />
           
           <div className="flex items-center space-x-3">
             <div className="text-right">
