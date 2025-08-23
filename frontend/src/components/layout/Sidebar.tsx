@@ -28,7 +28,7 @@ interface NavItem {
   path: string;
 }
 
-const Sidebar: React.FC<SidebarProps> = ({ user }) => {
+const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
   const location = useLocation();
 
   const navigationItems: NavItem[] = [
@@ -108,17 +108,35 @@ const Sidebar: React.FC<SidebarProps> = ({ user }) => {
         })}
       </nav>
 
-      {/* User section */}
-      <div className="p-4 border-t border-gray-200 flex-shrink-0">
-        <div className="flex items-center space-x-3">
-          <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
-            {user.avatar}
-          </div>
-          <div className="flex-1">
-            <p className="text-sm font-medium text-gray-900 truncate">
-              {user.name}
-            </p>
-            <p className="text-xs text-gray-500">Пользователь</p>
+      {/* Notifications and User section */}
+      <div className="flex-shrink-0">
+        {/* Notifications */}
+        <div className="px-4 py-2 border-t border-gray-200">
+          <NotificationCenter user={user} />
+        </div>
+        
+        {/* User info and logout */}
+        <div className="p-4 border-t border-gray-200">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center space-x-3">
+              <div className="h-10 w-10 bg-gradient-to-r from-blue-500 to-purple-500 rounded-full flex items-center justify-center text-white font-medium">
+                {user.avatar}
+              </div>
+              <div className="flex-1">
+                <p className="text-sm font-medium text-gray-900 truncate">
+                  {user.name}
+                </p>
+                <p className="text-xs text-gray-500 truncate">{user.email}</p>
+              </div>
+            </div>
+            
+            <button
+              onClick={onLogout}
+              className="p-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors hover:bg-gray-100"
+              title="Выйти"
+            >
+              <LogOut className="h-4 w-4" />
+            </button>
           </div>
         </div>
       </div>
