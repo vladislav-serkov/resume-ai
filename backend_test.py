@@ -214,6 +214,21 @@ def main():
     if not tester.test_get_status_checks():
         print("❌ Get status checks failed")
 
+    print("\n📋 Testing AI Status Endpoints...")
+    
+    # Test AI status endpoints
+    if not tester.test_get_ai_status():
+        print("❌ Get AI status failed")
+    
+    if not tester.test_update_ai_status_stop():
+        print("❌ Update AI status (stop) failed")
+    
+    if not tester.test_update_ai_status_start():
+        print("❌ Update AI status (start) failed")
+    
+    if not tester.test_ai_status_persistence():
+        print("❌ AI status persistence test failed")
+
     # Print results
     print("\n" + "=" * 50)
     print(f"📊 Backend API Test Results: {tester.tests_passed}/{tester.tests_run} tests passed")
