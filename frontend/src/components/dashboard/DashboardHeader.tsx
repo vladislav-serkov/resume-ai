@@ -78,16 +78,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
           <div className="flex items-center space-x-4">
             <NotificationCenter user={user} />
             
-            <div className="flex items-center space-x-3">
-              <div className="text-right">
-                <p className="text-sm font-medium text-gray-900">{user.name}</p>
-                <p className="text-xs text-gray-600">{user.position}</p>
-              </div>
-              <div className="h-10 w-10 bg-gradient-to-r from-blue-600 to-purple-600 rounded-full flex items-center justify-center text-white font-semibold">
-                {user.avatar}
-              </div>
-            </div>
-            
             <button
               onClick={onLogout}
               className="p-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
