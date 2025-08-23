@@ -25,11 +25,6 @@ const SettingsPage: React.FC = () => {
     experienceAdaptation: 'balanced'
   });
 
-  const [notificationSettings, setNotificationSettings] = useState<NotificationSettings>({
-    responseReport: true,
-    dailyReport: false
-  });
-
   const [newCompany, setNewCompany] = useState('');
 
   const handleAiSettingChange = (key: keyof AISettings, value: string | string[]) => {
