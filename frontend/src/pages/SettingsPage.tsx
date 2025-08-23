@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Bot, Bell, Save, DollarSign, MapPin, Shield, Building, Zap, Target } from 'lucide-react';
+import { Bot, Save, DollarSign, MapPin, Shield, Building, Zap, Target } from 'lucide-react';
 
 interface AISettings {
   salaryMin: string;
