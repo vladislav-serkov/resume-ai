@@ -1,6 +1,5 @@
 import React from 'react';
 import { Sparkles, Briefcase, TrendingUp, LogOut } from 'lucide-react';
-import NotificationCenter from '../NotificationCenter';
 import { User as UserType, VoidFunction } from '../../types';
 import { DASHBOARD_TABS } from '../../constants';
 
