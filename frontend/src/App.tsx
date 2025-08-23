@@ -1,65 +1,117 @@
-import { useCallback } from "react";
+import { useCallback, useEffect } from "react";
 import "./App.css";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useSearchParams, useNavigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
+import Dashboard from "./pages/Dashboard";
 import VacancyPage from "./pages/VacancyPage";
-import DashboardLayout from "./components/layout/DashboardLayout";
-import ResponsesPage from "./pages/ResponsesPage";
-import StatisticsPage from "./pages/StatisticsPage";
-import PricingPage from "./pages/PricingPage";
-import ProfilePage from "./pages/ProfilePage";
-import SettingsPage from "./pages/SettingsPage";
 import { User } from "./types";
+import { AuthProvider, useAuth, ProtectedRoute } from "./hooks/useAuth";
+import ErrorBoundary from "./components/ErrorBoundary";
 
-// Mock user data - since we removed authentication
-const mockUser: User = {
-  name: "Анна Иванова",
-  position: "Frontend Developer", 
-  avatar: "АИ",
-  email: "anna@example.com"
+/**
+ * OAuth callback handler component
+ */
+const OAuthCallback = () => {
+  const [searchParams] = useSearchParams();
+  const navigate = useNavigate();
+  const { refreshUser } = useAuth();
+
+  useEffect(() => {
+    const loginStatus = searchParams.get('login');
+    const error = searchParams.get('error');
+
+    if (error) {
+      console.error('OAuth error:', error);
+      navigate('/?error=' + error);
+      return;
+    }
+
+    if (loginStatus === 'success') {
+      // Refresh user data after successful OAuth
+      refreshUser().then(() => {
+        navigate('/app/dashboard');
+      });
+    } else {
+      navigate('/');
+    }
+  }, [searchParams, navigate, refreshUser]);
+
+  return (
+    <div className="flex items-center justify-center min-h-screen">
+      <div className="text-center">
+        <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-gray-600">Завершаем вход...</p>
+      </div>
+    </div>
+  );
 };
 
 /**
- * Main application component with sidebar-based navigation
+ * Main application router component
  */
-function App() {
-  /**
-   * Handle user logout (redirects to landing page)
-   */
-  const handleLogout = useCallback(() => {
-    window.location.href = '/';
-  }, []);
+const AppRouter = () => {
+  const { user, logout } = useAuth();
+
+  const handleLogout = useCallback(async () => {
+    await logout();
+  }, [logout]);
+
+  // Convert hh.ru user to our User type
+  const convertUser = (hhUser: any): User => ({
+    name: hhUser.name || `${hhUser.firstName || ''} ${hhUser.lastName || ''}`.trim() || hhUser.email,
+    position: "Специалист", // We don't have position from hh.ru in this context
+    avatar: hhUser.name ? hhUser.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : "U",
+    email: hhUser.email
+  });
 
   return (
+    <Routes>
+      {/* Public Routes */}
+      <Route path="/" element={<LandingPage />} />
+      <Route path="/dashboard" element={<OAuthCallback />} />
+      
+      {/* Protected Routes */}
+      <Route 
+        path="/app/dashboard" 
+        element={
+          <ProtectedRoute fallback={<Navigate to="/" replace />}>
+            {user ? <Dashboard user={convertUser(user)} onLogout={handleLogout} /> : <div>Loading...</div>}
+          </ProtectedRoute>
+        } 
+      />
+      
+      <Route 
+        path="/app/vacancy/:id" 
+        element={
+          <ProtectedRoute fallback={<Navigate to="/" replace />}>
+            {user ? <VacancyPage user={convertUser(user)} onLogout={handleLogout} /> : <div>Loading...</div>}
+          </ProtectedRoute>
+        } 
+      />
+      
+      {/* Redirect all other routes to home */}
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
+  );
+};
+
+/**
+ * Main application component with OAuth authentication
+ */
+function App() {
+  return (
     <div className="App">
-      <BrowserRouter>
-        <Routes>
-          {/* Public Routes */}
-          <Route path="/" element={<LandingPage />} />
-          
-          {/* Dashboard with nested routes */}
-          <Route 
-            path="/dashboard" 
-            element={<DashboardLayout user={mockUser} onLogout={handleLogout} />}
-          >
-            <Route index element={<Navigate to="/dashboard/responses" replace />} />
-            <Route path="responses" element={<ResponsesPage />} />
-            <Route path="statistics" element={<StatisticsPage />} />
-            <Route path="pricing" element={<PricingPage />} />
-            <Route path="profile" element={<ProfilePage />} />
-            <Route path="settings" element={<SettingsPage />} />
-          </Route>
-          
-          {/* Vacancy page - simplified access */}
-          <Route 
-            path="/vacancy/:id" 
-            element={<VacancyPage user={mockUser} onLogout={handleLogout} />} 
-          />
-          
-          {/* Redirect all other routes to dashboard */}
-          <Route path="*" element={<Navigate to="/dashboard/responses" replace />} />
-        </Routes>
-      </BrowserRouter>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <ErrorBoundary>
+            <AuthProvider>
+              <ErrorBoundary>
+                <AppRouter />
+              </ErrorBoundary>
+            </AuthProvider>
+          </ErrorBoundary>
+        </BrowserRouter>
+      </ErrorBoundary>
     </div>
   );
 }

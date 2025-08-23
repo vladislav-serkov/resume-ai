@@ -1,4 +1,3 @@
-import { useNavigate } from 'react-router-dom';
 import { 
   Bot, 
   Zap, 
@@ -7,15 +6,14 @@ import {
   CheckCircle, 
   Users, 
   Star,
-  ArrowRight,
   Play,
   Clock,
   Award,
   Sparkles
 } from 'lucide-react';
+import { HHLoginButtonCompact, HHLoginButtonCTA } from '../components/auth/HHLoginButton';
 
 const LandingPage = () => {
-  const navigate = useNavigate();
 
   const features = [
     {
@@ -87,18 +85,7 @@ const LandingPage = () => {
               </h1>
             </div>
             <div className="flex items-center space-x-4">
-              <button 
-                onClick={() => navigate('/dashboard')}
-                className="text-gray-600 hover:text-gray-900 font-medium transition-colors"
-              >
-                Войти
-              </button>
-              <button 
-                onClick={() => navigate('/dashboard')}
-                className="px-6 py-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:opacity-90 transition-opacity font-medium"
-              >
-                Начать поиск
-              </button>
+              <HHLoginButtonCompact variant="secondary" />
             </div>
           </div>
         </div>
@@ -125,13 +112,7 @@ const LandingPage = () => {
                 и отправляет отклики, пока вы спите. Увеличьте свои шансы в 3 раза!
               </p>
               <div className="flex flex-col sm:flex-row gap-4">
-                <button 
-                  onClick={() => navigate('/dashboard')}
-                  className="flex items-center justify-center space-x-2 px-8 py-4 bg-gradient-to-r from-blue-600 to-purple-600 text-white rounded-xl hover:opacity-90 transition-opacity font-semibold text-lg"
-                >
-                  <span>Начать бесплатно</span>
-                  <ArrowRight className="h-5 w-5" />
-                </button>
+                <HHLoginButtonCTA className="flex items-center justify-center space-x-2" />
                 <button className="flex items-center justify-center space-x-2 px-8 py-4 border-2 border-gray-300 text-gray-700 rounded-xl hover:border-gray-400 transition-colors font-semibold">
                   <Play className="h-5 w-5" />
                   <span>Смотреть демо</span>
@@ -324,13 +305,7 @@ const LandingPage = () => {
           <p className="text-xl text-blue-100 mb-8">
             Присоединяйтесь к тысячам специалистов, которые уже получают предложения каждый день
           </p>
-          <button 
-            onClick={() => navigate('/dashboard')}
-            className="inline-flex items-center space-x-3 px-10 py-4 bg-white text-gray-900 rounded-xl hover:bg-gray-100 transition-colors font-semibold text-lg"
-          >
-            <span>Начать поиск бесплатно</span>
-            <ArrowRight className="h-5 w-5" />
-          </button>
+          <HHLoginButtonCTA className="inline-flex items-center space-x-3" />
           <p className="text-blue-200 mt-4">Первые 100 откликов - бесплатно</p>
         </div>
       </section>
