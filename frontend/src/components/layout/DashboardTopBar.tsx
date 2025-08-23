@@ -1,6 +1,5 @@
 import React from 'react';
 import { LogOut } from 'lucide-react';
-import NotificationCenter from '../NotificationCenter';
 import { User } from '../../types';
 
 interface DashboardTopBarProps {
