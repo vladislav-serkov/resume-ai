@@ -67,6 +67,12 @@ export interface DashboardStats {
   autoResponses: number;
 }
 
+export interface AIStatus {
+  id: string;
+  is_active: boolean;
+  last_updated: string;
+}
+
 // Filter and search types
 export interface SearchFilters {
   location: string;
