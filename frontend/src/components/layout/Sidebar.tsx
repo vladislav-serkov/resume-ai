@@ -7,14 +7,18 @@ import {
   CreditCard, 
   User, 
   Settings,
-  ChevronRight
+  ChevronRight,
+  LogOut
 } from 'lucide-react';
+import NotificationCenter from '../NotificationCenter';
 
 interface SidebarProps {
   user: {
     name: string;
     avatar: string;
+    email: string;
   };
+  onLogout: () => void;
 }
 
 interface NavItem {
