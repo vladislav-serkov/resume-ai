@@ -31,10 +31,6 @@ const SettingsPage: React.FC = () => {
     setAiSettings(prev => ({ ...prev, [key]: value }));
   };
 
-  const handleNotificationChange = (key: keyof NotificationSettings, value: boolean) => {
-    setNotificationSettings(prev => ({ ...prev, [key]: value }));
-  };
-
   const addBlacklistedCompany = () => {
     if (newCompany.trim()) {
       setAiSettings(prev => ({
