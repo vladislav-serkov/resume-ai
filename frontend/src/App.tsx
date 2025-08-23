@@ -2,8 +2,13 @@ import { useCallback } from "react";
 import "./App.css";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import LandingPage from "./pages/LandingPage";
-import Dashboard from "./pages/Dashboard";
 import VacancyPage from "./pages/VacancyPage";
+import DashboardLayout from "./components/layout/DashboardLayout";
+import ResponsesPage from "./pages/ResponsesPage";
+import StatisticsPage from "./pages/StatisticsPage";
+import PricingPage from "./pages/PricingPage";
+import ProfilePage from "./pages/ProfilePage";
+import SettingsPage from "./pages/SettingsPage";
 import { User } from "./types";
 
 // Mock user data - since we removed authentication
@@ -15,7 +20,7 @@ const mockUser: User = {
 };
 
 /**
- * Main application component with simplified routing (no authentication)
+ * Main application component with sidebar-based navigation
  */
 function App() {
   /**
@@ -32,11 +37,18 @@ function App() {
           {/* Public Routes */}
           <Route path="/" element={<LandingPage />} />
           
-          {/* Dashboard - now accessible without authentication */}
+          {/* Dashboard with nested routes */}
           <Route 
             path="/dashboard" 
-            element={<Dashboard user={mockUser} onLogout={handleLogout} />} 
-          />
+            element={<DashboardLayout user={mockUser} onLogout={handleLogout} />}
+          >
+            <Route index element={<Navigate to="/dashboard/responses" replace />} />
+            <Route path="responses" element={<ResponsesPage />} />
+            <Route path="statistics" element={<StatisticsPage />} />
+            <Route path="pricing" element={<PricingPage />} />
+            <Route path="profile" element={<ProfilePage />} />
+            <Route path="settings" element={<SettingsPage />} />
+          </Route>
           
           {/* Vacancy page - simplified access */}
           <Route 
@@ -45,7 +57,7 @@ function App() {
           />
           
           {/* Redirect all other routes to dashboard */}
-          <Route path="*" element={<Navigate to="/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/dashboard/responses" replace />} />
         </Routes>
       </BrowserRouter>
     </div>
