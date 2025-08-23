@@ -75,7 +75,6 @@ const DashboardHeader: React.FC<DashboardHeaderProps> = ({
 
           {/* User menu */}
           <div className="flex items-center space-x-4">
-            
             <button
               onClick={onLogout}
               className="p-2 text-gray-600 hover:text-gray-900 rounded-lg transition-colors"
