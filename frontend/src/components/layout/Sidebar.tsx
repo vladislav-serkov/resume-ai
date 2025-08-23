@@ -138,11 +138,6 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
 
       {/* Notifications and User section */}
       <div className="flex-shrink-0">
-        {/* Notifications */}
-        <div className="px-4 py-2 border-t border-gray-200">
-          <NotificationCenter user={user} />
-        </div>
-        
         {/* User info and logout */}
         <div className="p-4 border-t border-gray-200">
           <div className="flex items-center justify-between">
