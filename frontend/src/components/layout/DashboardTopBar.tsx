@@ -1,5 +1,5 @@
 import React from 'react';
-import { LogOut, Bell } from 'lucide-react';
+import { LogOut } from 'lucide-react';
 import NotificationCenter from '../NotificationCenter';
 import { User } from '../../types';
 
