@@ -50,7 +50,7 @@ const SettingsPage: React.FC = () => {
 
   const handleSave = () => {
     // Здесь будет логика сохранения настроек
-    console.log('Saving settings:', { aiSettings, notificationSettings });
+    console.log('Saving settings:', { aiSettings });
     // Показать уведомление об успешном сохранении
   };
 
