@@ -267,58 +267,6 @@ const SettingsPage: React.FC = () => {
         </div>
       </div>
 
-      {/* Notification Settings */}
-      <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h2 className="text-xl font-semibold text-gray-900 mb-6 flex items-center">
-          <Bell className="h-6 w-6 mr-3 text-green-600" />
-          Настройки уведомлений Telegram
-        </h2>
-
-        <div className="space-y-4">
-          <div className="flex items-center justify-between py-3 border-b border-gray-200">
-            <div>
-              <h3 className="font-medium text-gray-900">Отчет по каждому отклику</h3>
-              <p className="text-sm text-gray-600">
-                Получать уведомление о каждом отправленном отклике
-              </p>
-            </div>
-            <button
-              onClick={() => handleNotificationChange('responseReport', !notificationSettings.responseReport)}
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                notificationSettings.responseReport ? 'bg-blue-600' : 'bg-gray-200'
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition duration-200 ease-in-out ${
-                  notificationSettings.responseReport ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
-
-          <div className="flex items-center justify-between py-3">
-            <div>
-              <h3 className="font-medium text-gray-900">Ежедневный отчет со статистикой</h3>
-              <p className="text-sm text-gray-600">
-                Ежедневная сводка по активности и статистике
-              </p>
-            </div>
-            <button
-              onClick={() => handleNotificationChange('dailyReport', !notificationSettings.dailyReport)}
-              className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 ${
-                notificationSettings.dailyReport ? 'bg-blue-600' : 'bg-gray-200'
-              }`}
-            >
-              <span
-                className={`pointer-events-none inline-block h-5 w-5 rounded-full bg-white shadow transform ring-0 transition duration-200 ease-in-out ${
-                  notificationSettings.dailyReport ? 'translate-x-5' : 'translate-x-0'
-                }`}
-              />
-            </button>
-          </div>
-        </div>
-      </div>
-
       {/* Save Button */}
       <div className="flex justify-end">
         <button
