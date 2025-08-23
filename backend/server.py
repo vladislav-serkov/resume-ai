@@ -60,6 +60,40 @@ async def get_status_checks():
     status_checks = await db.status_checks.find().to_list(1000)
     return [StatusCheck(**status_check) for status_check in status_checks]
 
+@api_router.get("/ai-status", response_model=AIStatus)
+async def get_ai_status():
+    """Get current AI assistant status"""
+    ai_status = await db.ai_status.find_one()
+    if not ai_status:
+        # Create default active status if none exists
+        default_status = AIStatus()
+        await db.ai_status.insert_one(default_status.dict())
+        return default_status
+    return AIStatus(**ai_status)
+
+@api_router.put("/ai-status", response_model=AIStatus)
+async def update_ai_status(input: AIStatusUpdate):
+    """Update AI assistant status (start/stop)"""
+    existing_status = await db.ai_status.find_one()
+    
+    if existing_status:
+        # Update existing status
+        updated_data = {
+            "is_active": input.is_active,
+            "last_updated": datetime.utcnow()
+        }
+        await db.ai_status.update_one(
+            {"id": existing_status["id"]}, 
+            {"$set": updated_data}
+        )
+        existing_status.update(updated_data)
+        return AIStatus(**existing_status)
+    else:
+        # Create new status
+        new_status = AIStatus(is_active=input.is_active)
+        await db.ai_status.insert_one(new_status.dict())
+        return new_status
+
 # Include the router in the main app
 app.include_router(api_router)
 
