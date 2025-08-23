@@ -94,33 +94,47 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
       </div>
 
       {/* Navigation */}
-      <nav className="flex-1 px-4 space-y-1 overflow-y-auto">
-        {navigationItems.map((item) => {
-          const Icon = item.icon;
-          const isActive = location.pathname === item.path;
-          
-          return (
-            <NavLink
-              key={item.id}
-              to={item.path}
-              className={({ isActive }) =>
-                `flex items-center justify-between px-3 py-2.5 rounded-lg transition-colors group ${
-                  isActive 
-                    ? 'bg-blue-50 text-blue-700 border border-blue-200' 
-                    : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
-                }`
-              }
-            >
-              <div className="flex items-center space-x-3">
-                <Icon className="h-5 w-5" />
-                <span className="font-medium">{item.label}</span>
-              </div>
-              <ChevronRight className={`h-4 w-4 opacity-0 group-hover:opacity-50 transition-opacity ${
-                isActive ? 'opacity-100 text-blue-500' : ''
-              }`} />
-            </NavLink>
-          );
-        })}
+      <nav className="flex-1 px-4 overflow-y-auto">
+        {navigationGroups.map((group, groupIndex) => (
+          <div key={group.title} className={groupIndex > 0 ? 'mt-6' : 'mt-0'}>
+            {/* Group title */}
+            <h3 className="px-3 mb-3 text-xs font-semibold text-gray-500 uppercase tracking-wider">
+              {group.title}
+            </h3>
+            
+            {/* Group items */}
+            <div className="space-y-1">
+              {group.items.map((item) => {
+                const Icon = item.icon;
+                const isActive = location.pathname === item.path;
+                
+                return (
+                  <NavLink
+                    key={item.id}
+                    to={item.path}
+                    className={({ isActive }) =>
+                      `flex items-center justify-between px-4 py-3 rounded-lg transition-all duration-200 group ${
+                        isActive 
+                          ? 'bg-blue-50 text-blue-700 border border-blue-200 shadow-sm' 
+                          : 'text-gray-700 hover:text-gray-900 hover:bg-gray-50'
+                      }`
+                    }
+                  >
+                    <div className="flex items-center space-x-4">
+                      <div className={`flex-shrink-0 ${isActive ? 'text-blue-600' : 'text-gray-500 group-hover:text-gray-700'}`}>
+                        <Icon className="h-5 w-5" />
+                      </div>
+                      <span className="font-medium text-sm">{item.label}</span>
+                    </div>
+                    <ChevronRight className={`h-4 w-4 opacity-0 group-hover:opacity-50 transition-opacity ${
+                      isActive ? 'opacity-100 text-blue-500' : ''
+                    }`} />
+                  </NavLink>
+                );
+              })}
+            </div>
+          </div>
+        ))}
       </nav>
 
       {/* Notifications and User section */}
