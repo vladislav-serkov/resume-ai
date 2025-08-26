@@ -43,19 +43,19 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
           id: 'responses',
           label: 'Отклики',
           icon: FileText,
-          path: '/dashboard/responses'
+          path: '/app/response'
         },
         {
           id: 'statistics',
           label: 'Статистика',
           icon: TrendingUp,
-          path: '/dashboard/statistics'
+          path: '/app/statistics'
         },
         {
           id: 'pricing',
           label: 'Тарифы',
           icon: CreditCard,
-          path: '/dashboard/pricing'
+          path: '/app/pricing'
         }
       ]
     },
@@ -66,13 +66,13 @@ const Sidebar: React.FC<SidebarProps> = ({ user, onLogout }) => {
           id: 'profile',
           label: 'Профиль',
           icon: User,
-          path: '/dashboard/profile'
+          path: '/app/profile'
         },
         {
           id: 'settings',
           label: 'Настройки',
           icon: Settings,
-          path: '/dashboard/settings'
+          path: '/app/settings'
         }
       ]
     }

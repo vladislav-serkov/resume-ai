@@ -1,9 +1,19 @@
-// Core user types
+// Core user types for UI components
 export interface User {
   name: string;
   position: string;
   avatar: string;
   email: string;
+}
+
+// Authenticated user type from backend
+export interface AuthenticatedUser {
+  id: string;
+  email: string;
+  firstName?: string;
+  lastName?: string;
+  name: string;
+  authenticated: boolean;
 }
 
 // Vacancy and job related types

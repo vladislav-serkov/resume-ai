@@ -101,6 +101,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     error,
   };
 
+
   return (
     <AuthContext.Provider value={value}>
       {children}
@@ -132,9 +133,12 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   children, 
   fallback = <div>Требуется авторизация</div> 
 }) => {
-  const { isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading, user } = useAuth();
+
+  console.log('ProtectedRoute render:', { isAuthenticated, isLoading, hasUser: !!user });
 
   if (isLoading) {
+    console.log('ProtectedRoute: showing loading');
     return (
       <div className="flex items-center justify-center min-h-screen">
         <div className="w-8 h-8 border-2 border-blue-600 border-t-transparent rounded-full animate-spin"></div>
@@ -144,9 +148,11 @@ export const ProtectedRoute: React.FC<ProtectedRouteProps> = ({
   }
 
   if (!isAuthenticated) {
+    console.log('ProtectedRoute: not authenticated, showing fallback');
     return <>{fallback}</>;
   }
 
+  console.log('ProtectedRoute: authenticated, showing children');
   return <>{children}</>;
 };
 
