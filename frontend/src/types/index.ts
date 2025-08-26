@@ -70,3 +70,23 @@ export interface AIStatus {
 
 // Event handler types
 export type VoidFunction = () => void;
+
+// Component prop types
+export interface DashboardProps {
+  user: User;
+  onLogout: VoidFunction;
+}
+
+// Backend application type
+export interface BackendApplication {
+  id: string;
+  vacancy_id: string;
+  status: string;
+  created_at: string;
+  updated_at: string;
+  company?: string;
+  position?: string;
+  location?: string;
+  salary?: string;
+  url?: string;
+}

@@ -1,3 +1,9 @@
+// Dashboard tabs
+export const DASHBOARD_TABS = {
+  APPLICATIONS: 'applications',
+  STATISTICS: 'statistics'
+} as const;
+
 // Application status labels
 export const APPLICATION_STATUS_LABELS = {
   interview: 'Собеседование',
