@@ -73,9 +73,13 @@ export interface DashboardStats {
 }
 
 export interface AIStatus {
-  id: string;
   is_active: boolean;
-  last_updated: string;
+  search_query: string | null;
+  max_applications_per_run: number;
+  check_interval_minutes: number;
+  last_check: string | null;
+  processed_today: number;
+  total_processed: number;
 }
 
 // Event handler types
@@ -87,16 +91,20 @@ export interface DashboardProps {
   onLogout: VoidFunction;
 }
 
-// Backend application type
-export interface BackendApplication {
+// Backend application type from SSE
+export interface SSEApplication {
   id: string;
-  vacancy_id: string;
   status: string;
-  created_at: string;
-  updated_at: string;
-  company?: string;
-  position?: string;
-  location?: string;
-  salary?: string;
-  url?: string;
+  appliedAt: string;
+  coverLetter: string;
+  isAutoApplied: boolean;
+  processingBatchId: string;
+  vacancy: {
+    id: string;
+    name: string;
+    company: string;
+    area: string;
+    url: string;
+    publishedAt: string;
+  };
 }

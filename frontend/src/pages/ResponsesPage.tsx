@@ -1,7 +1,7 @@
 import React from 'react';
 import AIStatusCard from '../components/dashboard/AIStatusCard';
 import ApplicationsList from '../components/dashboard/ApplicationsList';
-import { mockDashboardStats, mockApplications } from '../data/mockStats';
+import { mockDashboardStats } from '../data/mockStats';
 
 /**
  * Страница откликов - отображает список всех откликов пользователя
@@ -21,7 +21,7 @@ const ResponsesPage: React.FC = () => {
       <AIStatusCard stats={mockDashboardStats} />
 
       {/* Applications List */}
-      <ApplicationsList applications={mockApplications} />
+      <ApplicationsList />
     </div>
   );
 };

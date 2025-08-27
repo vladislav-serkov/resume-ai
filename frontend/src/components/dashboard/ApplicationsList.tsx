@@ -1,19 +1,108 @@
-import React from 'react';
-import { Application } from '../../types';
-import { getApplicationStatusLabel, getApplicationStatusStyle } from '../../utils/applicationHelpers';
-import { formatDateToRussian } from '../../utils/dateFormatters';
+import React, { useState, useEffect } from 'react';
+import { SSEApplication } from '../../types';
+import { aiService } from '../../services/aiService';
+import { ExternalLink, Calendar, Building, MapPin, Clock } from 'lucide-react';
 
 interface ApplicationsListProps {
-  applications: Application[];
+  // No props needed - will get data from SSE
 }
 
 /**
- * List of user's job applications
+ * List of user's job applications with real-time SSE updates
  */
-const ApplicationsList: React.FC<ApplicationsListProps> = ({ applications }) => {
+const ApplicationsList: React.FC<ApplicationsListProps> = () => {
+  const [applications, setApplications] = useState<SSEApplication[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    loadInitialApplications();
+    setupSSE();
+  }, []);
+
+  const loadInitialApplications = async () => {
+    try {
+      setLoading(true);
+      setError(null);
+      const response = await aiService.getUserApplications();
+      
+      if (response.success) {
+        setApplications(response.applications);
+      } else {
+        setError('Не удалось загрузить отклики');
+      }
+    } catch (err) {
+      console.error('Error loading applications:', err);
+      setError('Ошибка загрузки откликов');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const setupSSE = () => {
+    const eventSource = aiService.createEventSource();
+    
+    eventSource.addEventListener('application_update', (event: any) => {
+      const applicationData = JSON.parse(event.data);
+      console.log('Received new application:', applicationData);
+      
+      setApplications(prev => {
+        const existingIndex = prev.findIndex(app => app.id === applicationData.id);
+        if (existingIndex >= 0) {
+          const updated = [...prev];
+          updated[existingIndex] = applicationData;
+          return updated;
+        } else {
+          return [applicationData, ...prev];
+        }
+      });
+    });
+
+    return () => {
+      eventSource.close();
+    };
+  };
+
+  if (loading) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Мои отклики</h2>
+        <div className="flex items-center justify-center py-8">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+          <span className="ml-2 text-gray-600">Загрузка откликов...</span>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
+        <h2 className="text-2xl font-bold text-gray-900 mb-6">Мои отклики</h2>
+        <div className="text-center py-8">
+          <p className="text-red-600 mb-4">{error}</p>
+          <button
+            onClick={loadInitialApplications}
+            className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          >
+            Попробовать снова
+          </button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="bg-white rounded-2xl shadow-sm border border-gray-200 p-6">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6">Мои отклики</h2>
+      <div className="flex items-center justify-between mb-6">
+        <h2 className="text-2xl font-bold text-gray-900">Мои отклики</h2>
+        <button
+          onClick={loadInitialApplications}
+          className="text-sm text-blue-600 hover:text-blue-800 transition-colors"
+        >
+          Обновить
+        </button>
+      </div>
       
       <div className="space-y-4">
         {applications.map((application) => (
@@ -32,30 +121,73 @@ const ApplicationsList: React.FC<ApplicationsListProps> = ({ applications }) => 
  * Individual application card
  */
 interface ApplicationCardProps {
-  application: Application;
+  application: SSEApplication;
 }
 
 const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => {
-  const statusLabel = getApplicationStatusLabel(application.status);
-  const statusStyle = getApplicationStatusStyle(application.status);
-  const formattedDate = formatDateToRussian(application.date);
+  const statusColor = getStatusColor(application.status);
+  const statusLabel = getStatusLabel(application.status);
+  const appliedDate = formatDate(application.appliedAt);
+  const publishedDate = formatDate(application.vacancy.publishedAt);
 
   return (
-    <div className="flex items-center justify-between p-4 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-      <div>
-        <h3 className="font-semibold text-gray-900">{application.position}</h3>
-        <p className="text-gray-600">{application.company}</p>
-        <p className="text-sm text-gray-500">{formattedDate}</p>
-      </div>
-      
-      <div className="flex items-center space-x-4">
-        <span className={`px-3 py-1 rounded-full text-sm font-medium ${statusStyle}`}>
-          {statusLabel}
-        </span>
-        
-        <button className="text-blue-600 hover:text-blue-800 font-medium transition-colors">
-          Подробнее
-        </button>
+    <div className="border border-gray-200 rounded-lg p-4 hover:border-gray-300 transition-colors">
+      <div className="flex items-start justify-between">
+        <div className="flex-1">
+          <div className="flex items-center space-x-2 mb-2">
+            <h3 className="font-semibold text-gray-900">{application.vacancy.name}</h3>
+            {application.isAutoApplied && (
+              <span className="px-2 py-1 rounded-full text-xs font-medium bg-purple-100 text-purple-800">
+                Авто
+              </span>
+            )}
+            <span className={`px-2 py-1 rounded-full text-xs font-medium ${statusColor}`}>
+              {statusLabel}
+            </span>
+          </div>
+
+          <div className="flex items-center space-x-4 text-sm text-gray-600 mb-2">
+            <div className="flex items-center space-x-1">
+              <Building className="h-4 w-4" />
+              <span>{application.vacancy.company}</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <MapPin className="h-4 w-4" />
+              <span>{application.vacancy.area}</span>
+            </div>
+          </div>
+
+          <div className="flex items-center space-x-4 text-sm text-gray-500">
+            <div className="flex items-center space-x-1">
+              <Clock className="h-4 w-4" />
+              <span>Отправлено: {appliedDate}</span>
+            </div>
+            <div className="flex items-center space-x-1">
+              <Calendar className="h-4 w-4" />
+              <span>Опубликовано: {publishedDate}</span>
+            </div>
+          </div>
+
+          {application.coverLetter && (
+            <div className="mt-3 p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-700 italic">
+                "{application.coverLetter}"
+              </p>
+            </div>
+          )}
+        </div>
+
+        <div className="ml-4">
+          <a
+            href={application.vacancy.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex items-center space-x-1 text-blue-600 hover:text-blue-800 font-medium transition-colors"
+          >
+            <ExternalLink className="h-4 w-4" />
+            <span>Открыть</span>
+          </a>
+        </div>
       </div>
     </div>
   );
@@ -67,8 +199,52 @@ const ApplicationCard: React.FC<ApplicationCardProps> = ({ application }) => {
 const EmptyApplicationsState: React.FC = () => (
   <div className="text-center py-8">
     <p className="text-gray-500 mb-4">У вас пока нет откликов на вакансии</p>
-    <p className="text-sm text-gray-400">Начните поиск подходящих вакансий на вкладке "Поиск"</p>
+    <p className="text-sm text-gray-400">
+      Используйте AI-Ассистент для автоматического поиска и отклика на вакансии
+    </p>
   </div>
 );
+
+// Helper functions for status handling
+const getStatusColor = (status: string) => {
+  switch (status.toUpperCase()) {
+    case 'SENT':
+      return 'bg-blue-100 text-blue-800';
+    case 'VIEWED':
+      return 'bg-yellow-100 text-yellow-800';
+    case 'INVITED':
+      return 'bg-green-100 text-green-800';
+    case 'REJECTED':
+      return 'bg-red-100 text-red-800';
+    default:
+      return 'bg-gray-100 text-gray-800';
+  }
+};
+
+const getStatusLabel = (status: string) => {
+  switch (status.toUpperCase()) {
+    case 'SENT':
+      return 'Отправлено';
+    case 'VIEWED':
+      return 'Просмотрено';
+    case 'INVITED':
+      return 'Приглашение';
+    case 'REJECTED':
+      return 'Отклонено';
+    default:
+      return status;
+  }
+};
+
+const formatDate = (dateStr: string) => {
+  const date = new Date(dateStr);
+  return new Intl.DateTimeFormat('ru-RU', {
+    day: '2-digit',
+    month: '2-digit',
+    year: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit'
+  }).format(date);
+};
 
 export default ApplicationsList;
