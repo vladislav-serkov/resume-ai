@@ -94,13 +94,17 @@ export const aiService = {
       const response = await axios.get(`${API_BASE_URL}/api/vacancies/applications`, {
         withCredentials: true
       });
-      return response.data;
+      return {
+        success: response.data.success,
+        ...response.data.data
+      };
     } catch (error) {
       console.log('Get user applications error:', error);
       return {
         success: false,
         applications: [],
-        applicationsCount: 0
+        applicationsCount: 0,
+        stats: undefined
       };
     }
   },

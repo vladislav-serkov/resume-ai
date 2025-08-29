@@ -17,27 +17,23 @@ interface ProfileData {
  */
 const ProfilePage: React.FC = () => {
   const { user } = useAuth();
-  const [profileData, setProfileData] = useState<ProfileData>({
-    fullName: user?.name || 'Не указано',
-    phone: user?.phone || 'Не указано',
-    subscription: {
-      plan: 'Стандарт',
-      status: 'Активна',
-      expiresAt: '15 августа 2024'
-    }
-  });
 
-  // Update profile data when user changes
-  useEffect(() => {
-    if (user) {
-      const updatedProfileData = {
-        ...profileData,
-        fullName: user.name || 'Не указано',
-        phone: user.phone || 'Не указано'
-      };
-      setProfileData(updatedProfileData);
-    }
-  }, [user]);
+  // Если пользователь не залогинен, показываем заглушку
+  if (!user) {
+    return <div>Загрузка профиля...</div>;
+  }
+
+  // Формируем ФИО
+  const fullName = user.name || `${user.firstName || ''} ${user.lastName || ''}`.trim() || 'Не указано';
+  const phone = user.phone || 'Не указано';
+  const email = user.email || 'Не указано';
+
+  // subscription оставляем заглушкой
+  const subscription = {
+    plan: 'Стандарт',
+    status: 'Активна',
+    expiresAt: '15 августа 2024'
+  };
 
   const getSubscriptionStatusColor = (status: string) => {
     switch (status.toLowerCase()) {
@@ -69,14 +65,13 @@ const ProfilePage: React.FC = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <div className="h-20 w-20 bg-white bg-opacity-20 rounded-full flex items-center justify-center text-white text-2xl font-bold">
-                {user?.name ? user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
+                {user.name ? user.name.split(' ').map((n: string) => n[0]).join('').substring(0, 2).toUpperCase() : 'U'}
               </div>
               <div className="text-white">
-                <h2 className="text-2xl font-bold">{profileData.fullName}</h2>
-                <p className="text-blue-100">{user?.email || 'Не указано'}</p>
+                <h2 className="text-2xl font-bold">{fullName}</h2>
+                <p className="text-blue-100">{email}</p>
               </div>
             </div>
-            
           </div>
         </div>
 
@@ -88,16 +83,14 @@ const ProfilePage: React.FC = () => {
               <User className="h-5 w-5 mr-2 text-blue-600" />
               Личная информация
             </h3>
-            
             <div className="grid md:grid-cols-2 gap-4">
               {/* Full Name */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   ФИО
                 </label>
-                <p className="text-gray-900 py-2">{profileData.fullName}</p>
+                <p className="text-gray-900 py-2">{fullName}</p>
               </div>
-
               {/* Phone */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -105,11 +98,10 @@ const ProfilePage: React.FC = () => {
                 </label>
                 <p className="text-gray-900 py-2 flex items-center">
                   <Phone className="h-4 w-4 mr-2 text-gray-500" />
-                  {profileData.phone}
+                  {phone}
                 </p>
               </div>
             </div>
-
           </div>
 
           {/* Subscription Information */}
@@ -118,22 +110,20 @@ const ProfilePage: React.FC = () => {
               <Crown className="h-5 w-5 mr-2 text-purple-600" />
               Подписка
             </h3>
-            
             <div className="bg-gray-50 rounded-lg p-4">
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h4 className="text-lg font-medium text-gray-900">
-                    Тариф "{profileData.subscription.plan}"
+                    Тариф "{subscription.plan}"
                   </h4>
                   <p className="text-gray-600">
-                    Действует до {profileData.subscription.expiresAt}
+                    Действует до {subscription.expiresAt}
                   </p>
                 </div>
-                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getSubscriptionStatusColor(profileData.subscription.status)}`}>
-                  {profileData.subscription.status}
+                <span className={`px-3 py-1 rounded-full text-sm font-medium ${getSubscriptionStatusColor(subscription.status)}`}>
+                  {subscription.status}
                 </span>
               </div>
-              
               <div className="flex space-x-3">
                 <button className="px-4 py-2 bg-purple-600 text-white rounded-lg hover:bg-purple-700 transition-colors">
                   Изменить тариф

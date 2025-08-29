@@ -1,12 +1,41 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import AIStatusCard from '../components/dashboard/AIStatusCard';
 import ApplicationsList from '../components/dashboard/ApplicationsList';
-import { mockDashboardStats } from '../data/mockStats';
+import { aiService } from '../services/aiService';
 
 /**
  * Страница откликов - отображает список всех откликов пользователя
  */
 const ResponsesPage: React.FC = () => {
+  const [stats, setStats] = useState({
+    totalApplications: 0,
+    responses: 0,
+    interviews: 3, // mock
+    offers: 0,
+    aiAdaptations: 0,
+    autoResponses: 0
+  });
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchStats = async () => {
+      setLoading(true);
+      const response = await aiService.getUserApplications();
+      if (response && response.stats) {
+        setStats({
+          totalApplications: response.stats.total,
+          responses: response.stats.viewed, // или другое поле, если нужно
+          interviews: 3, // mock
+          offers: 0, // если появится на бэке — заменить
+          aiAdaptations: 0, // если появится на бэке — заменить
+          autoResponses: 0 // если появится на бэке — заменить
+        });
+      }
+      setLoading(false);
+    };
+    fetchStats();
+  }, []);
+
   return (
     <div className="space-y-6">
       {/* Page header */}
@@ -18,7 +47,7 @@ const ResponsesPage: React.FC = () => {
       </div>
 
       {/* AI Status Card */}
-      <AIStatusCard stats={mockDashboardStats} />
+      <AIStatusCard stats={stats} />
 
       {/* Applications List */}
       <ApplicationsList />
