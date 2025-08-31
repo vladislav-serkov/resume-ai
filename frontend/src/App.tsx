@@ -9,8 +9,10 @@ import PricingPage from "./pages/PricingPage";
 import ProfilePage from "./pages/ProfilePage";
 import SettingsPage from "./pages/SettingsPage";
 import DashboardLayout from "./components/layout/DashboardLayout";
+import AppLayout from "./components/layout/AppLayout";
 import { User } from "./types";
 import { AuthProvider, useAuth, ProtectedRoute } from "./hooks/useAuth";
+import { OnboardingProvider } from "./hooks/useOnboarding";
 import ErrorBoundary from "./components/ErrorBoundary";
 
 /**
@@ -34,6 +36,7 @@ const OAuthCallback = () => {
     if (loginStatus === 'success') {
       // Refresh user data after successful OAuth
       refreshUser().then(() => {
+        // Просто переходим в приложение - онбординг будет показан автоматически через модальное окно
         navigate('/app/response');
       });
     } else {
@@ -81,31 +84,33 @@ const AppRouter = () => {
   };
 
   return (
-    <Routes>
-      {/* Public Routes */}
-      <Route path="/" element={<LandingPage />} />
-      <Route path="/auth/callback" element={<OAuthCallback />} />
-      
-      {/* Protected App Routes */}
-      <Route 
-        path="/app"
-        element={
-          <ProtectedRoute fallback={<Navigate to="/" replace />}>
-            <DashboardLayout user={convertUser(user)} onLogout={handleLogout} />
-          </ProtectedRoute>
-        }
-      >
-        <Route path="response" element={<ResponsesPage />} />
-        <Route path="statistics" element={<StatisticsPage />} />
-        <Route path="pricing" element={<PricingPage />} />
-        <Route path="profile" element={<ProfilePage />} />
-        <Route path="settings" element={<SettingsPage />} />
-        <Route path="vacancy/:id" element={<VacancyPage user={convertUser(user)} onLogout={handleLogout} />} />
-      </Route>
-      
-      {/* Redirect all other routes to home */}
-      <Route path="*" element={<Navigate to="/" replace />} />
-    </Routes>
+    <AppLayout>
+      <Routes>
+        {/* Public Routes */}
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/auth/callback" element={<OAuthCallback />} />
+        
+        {/* Protected App Routes */}
+        <Route 
+          path="/app"
+          element={
+            <ProtectedRoute fallback={<Navigate to="/" replace />}>
+              <DashboardLayout user={convertUser(user)} onLogout={handleLogout} />
+            </ProtectedRoute>
+          }
+        >
+          <Route path="response" element={<ResponsesPage />} />
+          <Route path="statistics" element={<StatisticsPage />} />
+          <Route path="pricing" element={<PricingPage />} />
+          <Route path="profile" element={<ProfilePage />} />
+          <Route path="settings" element={<SettingsPage />} />
+          <Route path="vacancy/:id" element={<VacancyPage user={convertUser(user)} onLogout={handleLogout} />} />
+        </Route>
+        
+        {/* Redirect all other routes to home */}
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
+    </AppLayout>
   );
 };
 
@@ -119,9 +124,11 @@ function App() {
         <BrowserRouter>
           <ErrorBoundary>
             <AuthProvider>
-              <ErrorBoundary>
-                <AppRouter />
-              </ErrorBoundary>
+              <OnboardingProvider>
+                <ErrorBoundary>
+                  <AppRouter />
+                </ErrorBoundary>
+              </OnboardingProvider>
             </AuthProvider>
           </ErrorBoundary>
         </BrowserRouter>

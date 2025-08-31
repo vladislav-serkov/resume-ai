@@ -18,16 +18,16 @@ export interface UpdateAIStatusRequest {
 
 export const aiService = {
   /**
-   * Get current AI assistant status
+   * Get current AI search automation status
    */
   async getAIStatus(): Promise<AIStatus> {
     try {
-      const response = await axios.get(`${API_BASE_URL}/api/ai-status`, {
+      const response = await axios.get(`${API_BASE_URL}/api/ai/search/status`, {
         withCredentials: true // Include session cookies
       });
       return response.data;
     } catch (error) {
-      console.log('AI Status endpoint error:', error);
+      console.log('AI Search status endpoint error:', error);
       // Return default status instead of throwing
       return {
         is_active: false,
@@ -42,46 +42,46 @@ export const aiService = {
   },
 
   /**
-   * Start AI processing with parameters
+   * Start AI search automation with parameters
    */
   async startProcessing(request: StartProcessingRequest): Promise<AIStatus> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/ai-status/start`, request, {
+      const response = await axios.post(`${API_BASE_URL}/api/ai/search/start`, request, {
         withCredentials: true
       });
       return response.data;
     } catch (error) {
-      console.error('Failed to start AI processing:', error);
+      console.error('Failed to start AI search automation:', error);
       throw error;
     }
   },
 
   /**
-   * Stop AI processing
+   * Stop AI search automation
    */
   async stopProcessing(): Promise<AIStatus> {
     try {
-      const response = await axios.post(`${API_BASE_URL}/api/ai-status/stop`, {}, {
+      const response = await axios.post(`${API_BASE_URL}/api/ai/search/stop`, {}, {
         withCredentials: true
       });
       return response.data;
     } catch (error) {
-      console.error('Failed to stop AI processing:', error);
+      console.error('Failed to stop AI search automation:', error);
       throw error;
     }
   },
 
   /**
-   * Update AI assistant settings
+   * Update AI search automation settings
    */
   async updateAIStatus(request: UpdateAIStatusRequest): Promise<AIStatus> {
     try {
-      const response = await axios.put(`${API_BASE_URL}/api/ai-status`, request, {
+      const response = await axios.put(`${API_BASE_URL}/api/ai/search`, request, {
         withCredentials: true
       });
       return response.data;
     } catch (error) {
-      console.error('Failed to update AI status:', error);
+      console.error('Failed to update AI search automation:', error);
       throw error;
     }
   },
@@ -110,10 +110,10 @@ export const aiService = {
   },
 
   /**
-   * Create SSE connection for real-time updates
+   * Create SSE connection for real-time AI search updates
    */
   createEventSource(): EventSource {
-    return new EventSource(`${API_BASE_URL}/api/ai-status/stream`, {
+    return new EventSource(`${API_BASE_URL}/api/ai/search/stream`, {
       withCredentials: true
     });
   }
