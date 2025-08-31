@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { authService, User } from '../services/authService';
 
 interface AuthContextType {
@@ -25,23 +25,43 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  
+  // Request deduplication: track ongoing request to prevent race conditions
+  const loadUserPromiseRef = useRef<Promise<void> | null>(null);
 
   /**
-   * Load user information from session
+   * Load user information from session with request deduplication
    */
   const loadUser = async () => {
-    try {
-      setError(null);
-      const userData = await authService.getCurrentUser();
-      setUser(userData);
-    } catch (error) {
-      setUser(null);
-      console.log('User not authenticated:', error);
-      // Don't set error for normal "not authenticated" cases
-      // This is expected when user hasn't logged in yet
-    } finally {
-      setIsLoading(false);
+    // If there's already a request in progress, wait for it to complete
+    if (loadUserPromiseRef.current) {
+      console.log('loadUser: Request already in progress, waiting for completion');
+      return loadUserPromiseRef.current;
     }
+
+    // Create a new request promise
+    const requestPromise = (async () => {
+      try {
+        setError(null);
+        console.log('loadUser: Making /api/user request');
+        const userData = await authService.getCurrentUser();
+        setUser(userData);
+        console.log('loadUser: Successfully loaded user data');
+      } catch (error) {
+        setUser(null);
+        console.log('User not authenticated:', error);
+        // Don't set error for normal "not authenticated" cases
+        // This is expected when user hasn't logged in yet
+      } finally {
+        setIsLoading(false);
+        // Clear the promise reference when request is complete
+        loadUserPromiseRef.current = null;
+      }
+    })();
+
+    // Store the promise to prevent concurrent requests
+    loadUserPromiseRef.current = requestPromise;
+    return requestPromise;
   };
 
   /**
@@ -87,7 +107,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
    * Refresh user information
    */
   const refreshUser = async () => {
-    setIsLoading(true);
+    // loadUser уже управляет состоянием isLoading и имеет дедупликацию
     await loadUser();
   };
 
